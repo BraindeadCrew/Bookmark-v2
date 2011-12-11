@@ -1,5 +1,6 @@
 import unittest
 
+
 class BookmarkListTest(unittest.TestCase):
     def setUp(self):
         pass

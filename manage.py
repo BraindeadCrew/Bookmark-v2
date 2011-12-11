@@ -1,10 +1,11 @@
 from bookmark import app
 from bookmark.model import db
-
+from bookmark.blueprint.api.item.Bookmark import ItemBookmark
+from bookmark.service import add_bookmark
 from flaskext.script import Manager, Command
 
-import json
 
+import json
 
 manager = Manager(app)
 
@@ -17,8 +18,12 @@ class SyncDB(Command):
 
         items = json.loads(open('sample.json').read())
         for item in items:
-            # TODO add sample.json content in database
-            pass
+            i = ItemBookmark(ptags=item['tags'],
+                plink=item['link'], ptitle=item['title'],
+                pdescription=item['description'])
+            print("Add", i)
+            add_bookmark(i)
+
 
 
 manager.add_command('syncdb', SyncDB())
