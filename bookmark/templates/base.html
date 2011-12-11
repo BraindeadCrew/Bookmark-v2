@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8/>
+    <title>{% block head_title %}{% endblock %}</title>
+    {% block head_css %}{% endblock %}
+    {% block head_js %}{% endblock %}
+</head>
+<body>
+<div class="container">
+{% block content %}{% endblock %}
+{% block templates %}{% endblock %}
+</div>
+</body>
+</html>
