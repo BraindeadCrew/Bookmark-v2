@@ -11,20 +11,24 @@ def convert_bookmark(bookmark):
     b.description = bookmark.description
     if bookmark.tags is not None:
         for tag in bookmark.tags:
-            b.tags.append(get_tag(tag))
+            b.tags.append(get_tag_or_create(tag))
     return b
 
 
-def get_tag(name):
+def get_tag_or_create(name):
     """
     return a tag, create it if it does not currently exist
     """
-    tag = Tag.query.filter_by(name=name).first()
+    tag = get_tag(name)
     if tag is None:
         tag = Tag(name)
         db.session.add(tag)
         db.session.commit()
     return tag
+
+
+def get_tag(name):
+    return Tag.query.filter_by(name=name).first()
 
 
 def get_tagcloud(filter=None):
