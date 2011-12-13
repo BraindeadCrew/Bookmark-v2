@@ -3,24 +3,67 @@
         "title": "braindead",
         "link": "http://braindead.fr/",
         "description": "braindead root",
-        "tags": ["braindead", "root", "flattr" ]
+        "tags": [
+            {
+                "name": "braindead"
+            },
+            {
+                "name": "root"
+            },
+            {
+                "name": "flattr"
+            }
+        ]
     },
     {
         "title": "braindead git",
         "link": "http://git.braindead.fr",
         "description": "git braindead web",
-        "tags": ["git", "braindead", "web" ]
+        "tags": [
+            {
+                "name": "git"
+            },
+            {
+                "name": "braindead"
+            },
+            {
+                "name": "web"
+            }
+        ]
     },
     {
         "title": "minecraft",
         "link": "http://minecraft/",
         "description": "minecraft game",
-        "tags": ["minecraft", "game", "pixel" ]
+        "tags": [
+            {
+                "name": "minecraft"
+            },
+            {
+                "name": "game"
+            },
+            {
+                "name": "pixel"
+            }
+        ]
     },
     {
         "title": "zenk-security",
         "link": "http://zenk-security.com",
         "description": "zenk-security community",
-        "tags": ["zenk", "security", "community", "web" ]
+        "tags": [
+            {
+                "name": "zenk"
+            },
+            {
+                "name": "security"
+            },
+            {
+                "name": "community"
+            },
+            {
+                "name": "web"
+            }
+        ]
     }
 ]

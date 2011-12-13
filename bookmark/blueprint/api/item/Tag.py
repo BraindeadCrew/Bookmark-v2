@@ -3,6 +3,7 @@ class ItemTag:
         self._id = pid
         self.name = pname
         self.count = pcount
+        self.size = 0
 
     def json(self):
         return {

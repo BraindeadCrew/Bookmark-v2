@@ -1,18 +1,16 @@
 from flask import Blueprint, request
 
 from bookmark import app
-from bookmark.settings import VERSION
+from bookmark.settings import VERSION, PER_PAGE, SEPARATOR
 from bookmark.service import get_tagcloud, get_tag, get_list_bookmark
 
-
+from tagscloud import process_tag_count
 from .item.Bookmark import ItemBookmark
 from .item.Tag import ItemTag
 
 import json
 
 b = Blueprint('api', __name__)
-
-SEPARATOR = '+'
 
 
 @b.route('/', methods=['GET', ])
@@ -30,6 +28,7 @@ def bookmarks(tags=None):
             if x is not None]
 
     bookmarks = get_list_bookmark(filters)
+    total = get_list_bookmark(filters, True)
     bookmark_list = []
 
     for b in bookmarks:
@@ -37,7 +36,13 @@ def bookmarks(tags=None):
         bookmark_list.append(bookmark)
 
     bookmark_list = map(lambda x: x.json(), bookmark_list)
-    response = app.make_response(json.dumps(bookmark_list))
+    ret = {
+        "bookmarks": bookmark_list,
+        "page": 1,
+        "per_page": PER_PAGE,
+        "total": total,
+    }
+    response = app.make_response(json.dumps(ret))
     response.mimetype = 'application/json'
     return response
 
@@ -56,6 +61,8 @@ def tagcloud(tags=None):
         tag_list.append(tag)
     tags_list = map(lambda x: x.json(),
         tag_list)
+
+    process_tag_count(tags_list, max_percent=30, min_percent=11)
     response = app.make_response(json.dumps(tags_list))
     response.mimetype = 'application/json'
     return response

@@ -3,7 +3,6 @@ from sqlalchemy import func
 
 
 def convert_bookmark(bookmark):
-    # TODO does not take care of tags currently
     b = Bookmark()
     b.id = bookmark._id
     b.link = bookmark.link
@@ -47,15 +46,25 @@ def get_tagcloud(filter=None):
     return query.group_by(Tag.id).all()
 
 
-def get_list_bookmark(filter=None):
-    query = Bookmark.query
+def get_list_bookmark(filter=None, count=False):
+    """
+    solution pour le count, faire une sous requete qui sera ensuite
+    utilise par le count de la requette principale
+    """
+
+    query = Bookmark.query if not count else db.session.query(Bookmark.id)
     if filter is not None and len(filter) > 0:
         bookmark_tag = db.metadata.tables['bookmark_tag']
         query = query.filter(Bookmark.id == bookmark_tag.c.bookmark_id)\
             .filter(bookmark_tag.c.tag_id.in_(filter))\
             .group_by(Bookmark.id)\
             .having(func.count(Bookmark.id) == len(filter))
-    return query.all()
+    if count:
+        subquery = query.subquery()
+        return db.session.query(func.count(Bookmark.id))\
+            .filter(Bookmark.id == subquery.c.id).all()[0][0]
+    else:
+        return query.all()
 
 
 def add_bookmark(bookmark):

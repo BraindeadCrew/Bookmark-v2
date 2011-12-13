@@ -20,7 +20,7 @@ class SyncDB(Command):
         for item in items:
             i = ItemBookmark(ptags=item['tags'],
                 plink=item['link'], ptitle=item['title'],
-                pdescription=item['description'])
+                pdescription=item['description'], json=True)
             print("Add", i)
             add_bookmark(i)
 
