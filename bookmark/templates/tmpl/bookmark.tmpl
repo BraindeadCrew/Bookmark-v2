@@ -1,0 +1,11 @@
+<script type="text/template" id="bookmark-template">
+<p><a href="<%= link %>"><%= title %></a></p>
+<div>
+<%= description %>
+</div>
+<p>
+    <% _.each(tags, function(tag) { %>
+        <span><%= tag %></span>,
+    <% }); %>
+</p>
+</script>

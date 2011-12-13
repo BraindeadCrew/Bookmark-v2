@@ -1,0 +1,12 @@
+<script type="text/template" id="pagination-template">
+<% for(i=1; i<=ttl_page; i++) { %>
+    <span>
+        <% if(i == page) { %>
+        <%= i %>
+        <% } else { %>
+            <a href="#index/page/<%= i %>"><%= i %></a>
+        <% } %>
+        <% if(i < ttl_page) { %>,<% } %>
+    </span>
+<% } %>
+</script>

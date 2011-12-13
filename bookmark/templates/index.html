@@ -15,22 +15,10 @@
 <div id="tagscloud" class="row span16"></div>
 <h1>Bookmarks</h1>
 <div id="bookmarks" class="row span16"></div>
+<div id="pagination-bookmarks"></div>
 {% endblock %}
 {% block templates %}
-<script type="text/template" id="bookmark-template">
-<p><a href="<%= link %>"><%= title %></a></p>
-<div>
-<%= description %>
-</div>
-<p>
-    <% _.each(tags, function(tag) { %>
-        <span><%= tag %></span>,
-    <% }); %>
-</p>
-</script>
-<script type="text/template" id="tagscloud-template">
-<% _.each(tags, function(tag) { %>
-<span style="font-size: <%= tag.size %>px;"><%= tag.name %></span>
-<% }); %>
-</script>
+{% include "./tmpl/bookmark.tmpl" %}
+{% include "./tmpl/tagscloud.tmpl" %}
+{% include "./tmpl/pagination.tmpl" %}
 {% endblock %}

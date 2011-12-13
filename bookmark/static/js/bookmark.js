@@ -35,7 +35,8 @@ $(document).ready(function() {
 
     var BookmarkCollectionView = Backbone.View.extend({
         className: "bookmarks",
-        el: $('#bookmarks'),
+        el: $('#pagination-bookmarks'),
+        template: _.template($('#pagination-template').html()),
         initialize: function() {
             console.log("create bookmark collectionview", this.collection);
             this.collection.bind('reset', this.addAll, this);
@@ -49,7 +50,12 @@ $(document).ready(function() {
             $('#bookmarks').append(view.render().el);
         },
         render: function() {
-
+            ttl_page = Math.ceil(this.collection.total / this.collection.per_page);
+            $(this.el).html(this.template({
+                ttl_page: ttl_page, 
+                page: this.collection.page
+            }));
+            return this;
         }
     }); 
 
