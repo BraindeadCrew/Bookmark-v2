@@ -18,17 +18,17 @@ def index():
     return VERSION
 
 
-@b.route('/bookmarks', methods=['GET', ])
-@b.route('/bookmarks/<string:tags>', methods=['GET', ])
-def bookmarks(tags=None):
+@b.route('/bookmarks/page/<int:page>', methods=['GET', ])
+@b.route('/bookmarks/page/<int:page>/<string:tags>', methods=['GET', ])
+def bookmarks(page, tags=None):
     filters = []
     if tags is not None:
         filters = [x.id for x in
             [get_tag(x) for x in tags.split(SEPARATOR)]
             if x is not None]
 
-    bookmarks = get_list_bookmark(filters)
-    total = get_list_bookmark(filters, True)
+    bookmarks = get_list_bookmark(filter=filters, page=page, per_page=PER_PAGE)
+    total = get_list_bookmark(filters, count=True)
     bookmark_list = []
 
     for b in bookmarks:

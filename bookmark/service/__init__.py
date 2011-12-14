@@ -46,7 +46,7 @@ def get_tagcloud(filter=None):
     return query.group_by(Tag.id).all()
 
 
-def get_list_bookmark(filter=None, count=False):
+def get_list_bookmark(filter=None, count=False, page=None, per_page=None):
     """
     solution pour le count, faire une sous requete qui sera ensuite
     utilise par le count de la requette principale
@@ -59,6 +59,10 @@ def get_list_bookmark(filter=None, count=False):
             .filter(bookmark_tag.c.tag_id.in_(filter))\
             .group_by(Bookmark.id)\
             .having(func.count(Bookmark.id) == len(filter))
+
+    if page is not None and per_page is not None:
+        query = query.limit(per_page).offset((page-1) * per_page)
+
     if count:
         subquery = query.subquery()
         return db.session.query(func.count(Bookmark.id))\
