@@ -34,14 +34,13 @@ var BookmarkCollection = Backbone.Collection.extend({
         this.router.bind("pagechange", this.loadPage, this);
     },
     parse: function(response) {
-        this.page = response.page;
         this.per_page = response.per_page;
         this.total = response.total;
         return response.bookmarks;
     },
     loadPage: function(page) {
         this.page = page;
-        this.reset();
+        this.fetch();
     }
 });
 
@@ -74,7 +73,7 @@ $(document).ready(function() {
             this.collection.bind('all', this.render, this);
         },
         addAll: function() {
-            $(this.el).empty();
+            $('#bookmarks').empty();
             this.collection.each(this.addOne);
             this.render();
         },
@@ -97,6 +96,9 @@ $(document).ready(function() {
         template: _.template($('#tagscloud-template').html()),
         el: $('#tagscloud'),
         page: 1,
+        events: {
+            "click .unselected":   "selectTag"
+        },
         initialize: function() {
             //console.log("create tags cloud view ", this.collection);
             this.collection.bind('reset', this.render, this);
@@ -104,6 +106,10 @@ $(document).ready(function() {
         render: function() {
             $(this.el).html(this.template({ tags: this.collection.toJSON()}));
             return this;
+        },
+        selectTag: function(e) {
+            console.log("tag selected");
+            //this.collection.addFilter(
         }
     });
 

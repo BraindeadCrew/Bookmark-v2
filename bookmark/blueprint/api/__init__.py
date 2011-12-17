@@ -38,7 +38,6 @@ def bookmarks(page, tags=None):
     bookmark_list = map(lambda x: x.json(), bookmark_list)
     ret = {
         "bookmarks": bookmark_list,
-        "page": 1,
         "per_page": PER_PAGE,
         "total": total,
     }
