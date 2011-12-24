@@ -1,9 +1,9 @@
 BookmarkView = require('views/bookmark_view').BookmarkView
+paginationTemplate = require('templates/pagination')
 
 class exports.BookmarkCollectionView extends Backbone.View
   className: 'bookmarks'
   el: $('#pagination-bookmarks')
-  template: _.template($('#pagination-template').html())
   initialize: ->
     @collection.bind 'reset', @addAll, @
     @collection.bind 'all', @render, @
@@ -19,5 +19,6 @@ class exports.BookmarkCollectionView extends Backbone.View
     return
   render: ->
     ttl_page = Math.ceil(@collection.total / @collection.per_page)
-    $(@el).html(@template { ttl_page: ttl_page,page: @collection.page })
-    return @
+    page = @collection.page
+    $(@el).html paginationTemplate(ttl_page: ttl_page, page: page)
+    @

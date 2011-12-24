@@ -11112,7 +11112,7 @@ window.jQuery = window.$ = jQuery;
 
 }).call(this);
 }, "main": function(exports, require, module) {(function() {
-  var BookmarkCollection, BookmarkCollectionView, HomeView, MainRouter, TagscloudCollection, TagscloudView;
+  var BookmarkCollection, BookmarkCollectionView, MainRouter, TagscloudCollection, TagscloudView;
 
   window.app = {};
 
@@ -11125,8 +11125,6 @@ window.jQuery = window.$ = jQuery;
   app.views = {};
 
   MainRouter = require('routers/main_router').MainRouter;
-
-  HomeView = require('views/home_view').HomeView;
 
   BookmarkCollection = require('collections/bookmark_collection').BookmarkCollection;
 
@@ -11218,7 +11216,143 @@ window.jQuery = window.$ = jQuery;
   })(Backbone.Router);
 
 }).call(this);
-}, "templates/home": function(exports, require, module) {module.exports = function(__obj) {
+}, "templates/bookmark": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var tag, _i, _len, _ref;
+    
+      __out.push('<p><a href="');
+    
+      __out.push(__sanitize(this.bookmark.link));
+    
+      __out.push('">');
+    
+      __out.push(__sanitize(this.bookmark.title));
+    
+      __out.push('</a></p>\n<div>\n');
+    
+      __out.push(__sanitize(this.bookmark.description));
+    
+      __out.push('\n</div>\n<p>\n    ');
+    
+      _ref = this.bookmark.tags;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tag = _ref[_i];
+        __out.push('\n        <span>');
+        __out.push(__sanitize(tag));
+        __out.push('</span>,\n    ');
+      }
+    
+      __out.push('\n</p>\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "templates/pagination": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var i, _ref;
+    
+      for (i = 1, _ref = this.ttl_page; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
+        __out.push('\n    <span>\n        ');
+        if (i === this.page) {
+          __out.push('\n        ');
+          __out.push(__sanitize(i));
+          __out.push('\n        ');
+        } else {
+          __out.push('\n            <a href="#index/page/');
+          __out.push(__sanitize(i));
+          __out.push('">');
+          __out.push(__sanitize(i));
+          __out.push('</a>\n        ');
+        }
+        __out.push('\n        ');
+        if (i < this.ttl_page) __out.push(',');
+        __out.push('\n    </span>\n');
+      }
+    
+      __out.push('\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "templates/tag": function(exports, require, module) {module.exports = function(__obj) {
   if (!__obj) __obj = {};
   var __out = [], __capture = function(callback) {
     var out = __out, result;
@@ -11258,7 +11392,73 @@ window.jQuery = window.$ = jQuery;
   (function() {
     (function() {
     
-      __out.push('<!-- START you can remove this -->\n<div id="content">\n  <span id="props">with coffee</span>\n  <h1>brunch</h1>\n  <h2>Welcome!</h2>\n  <ul>\n    <li><a href="http://brunchwithcoffee.com/#documentation">Documentation</a></li>\n    <li><a href="https://github.com/brunch/brunch/issues">Github Issues</a></li>\n    <li><a href="https://github.com/brunch/example-todos">Todos Example App</a></li>\n  </ul>\n</div>\n<!-- END you can remove this -->\n');
+      __out.push('<span class="unselected" style="font-size: ');
+    
+      __out.push(__sanitize(this.tag.size));
+    
+      __out.push('px;">\n    ');
+    
+      __out.push(__sanitize(this.tag.name));
+    
+      __out.push('\n</span>\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}, "templates/tagscloud": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+      var tag, _i, _len, _ref;
+    
+      _ref = this.tags;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tag = _ref[_i];
+        __out.push('\n<span class="unselected" style="font-size: ');
+        __out.push(__sanitize(tag.size));
+        __out.push('px;">\n    ');
+        __out.push(__sanitize(tag.name));
+        __out.push('\n</span>\n');
+      }
+    
+      __out.push('\n');
     
     }).call(this);
     
@@ -11266,11 +11466,13 @@ window.jQuery = window.$ = jQuery;
   __obj.safe = __objSafe, __obj.escape = __escape;
   return __out.join('');
 }}, "views/bookmark_collection_view": function(exports, require, module) {(function() {
-  var BookmarkView,
+  var BookmarkView, paginationTemplate,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   BookmarkView = require('views/bookmark_view').BookmarkView;
+
+  paginationTemplate = require('templates/pagination');
 
   exports.BookmarkCollectionView = (function(_super) {
 
@@ -11283,8 +11485,6 @@ window.jQuery = window.$ = jQuery;
     BookmarkCollectionView.prototype.className = 'bookmarks';
 
     BookmarkCollectionView.prototype.el = $('#pagination-bookmarks');
-
-    BookmarkCollectionView.prototype.template = _.template($('#pagination-template').html());
 
     BookmarkCollectionView.prototype.initialize = function() {
       this.collection.bind('reset', this.addAll, this);
@@ -11306,11 +11506,12 @@ window.jQuery = window.$ = jQuery;
     };
 
     BookmarkCollectionView.prototype.render = function() {
-      var ttl_page;
+      var page, ttl_page;
       ttl_page = Math.ceil(this.collection.total / this.collection.per_page);
-      $(this.el).html(this.template({
+      page = this.collection.page;
+      $(this.el).html(paginationTemplate({
         ttl_page: ttl_page,
-        page: this.collection.page
+        page: page
       }));
       return this;
     };
@@ -11321,8 +11522,11 @@ window.jQuery = window.$ = jQuery;
 
 }).call(this);
 }, "views/bookmark_view": function(exports, require, module) {(function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var bookmarkTemplate,
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  bookmarkTemplate = require('templates/bookmark');
 
   exports.BookmarkView = (function(_super) {
 
@@ -11334,10 +11538,10 @@ window.jQuery = window.$ = jQuery;
 
     BookmarkView.prototype.tagName = 'div';
 
-    BookmarkView.prototype.template = _.template($('#bookmark-template').html());
-
     BookmarkView.prototype.render = function() {
-      $(this.el).html(this.template(this.model.toJSON()));
+      $(this.el).html(bookmarkTemplate({
+        bookmark: this.model.toJSON()
+      }));
       return this;
     };
 
@@ -11346,36 +11550,12 @@ window.jQuery = window.$ = jQuery;
   })(Backbone.View);
 
 }).call(this);
-}, "views/home_view": function(exports, require, module) {(function() {
-  var homeTemplate,
+}, "views/tag_view": function(exports, require, module) {(function() {
+  var tagTemplate,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  homeTemplate = require('templates/home');
-
-  exports.HomeView = (function(_super) {
-
-    __extends(HomeView, _super);
-
-    function HomeView() {
-      HomeView.__super__.constructor.apply(this, arguments);
-    }
-
-    HomeView.prototype.id = 'home-view';
-
-    HomeView.prototype.render = function() {
-      $(this.el).html(homeTemplate());
-      return this;
-    };
-
-    return HomeView;
-
-  })(Backbone.View);
-
-}).call(this);
-}, "views/tag_view": function(exports, require, module) {(function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+  tagTemplate = require('templates/tag');
 
   exports.TagView = (function(_super) {
 
@@ -11389,8 +11569,6 @@ window.jQuery = window.$ = jQuery;
 
     TagView.prototype.className = 'tag';
 
-    TagView.prototype.template = _.template($('#tag-template').html());
-
     TagView.prototype.events = {
       "click": "addFilter"
     };
@@ -11400,7 +11578,9 @@ window.jQuery = window.$ = jQuery;
     };
 
     TagView.prototype.render = function() {
-      $(this.el).html(this.template(this.model.toJSON()));
+      $(this.el).html(tagTemplate({
+        tag: this.model.toJSON()
+      }));
       return this;
     };
 

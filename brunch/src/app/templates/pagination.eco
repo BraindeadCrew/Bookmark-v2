@@ -1,0 +1,10 @@
+<% for i in [1 .. @ttl_page]: %>
+    <span>
+        <% if i == @page: %>
+        <%= i %>
+        <% else: %>
+            <a href="#index/page/<%= i %>"><%= i %></a>
+        <% end %>
+        <% if i < @ttl_page: %>,<% end %>
+    </span>
+<% end %>

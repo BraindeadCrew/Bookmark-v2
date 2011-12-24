@@ -5,7 +5,6 @@ app.collections = {}
 app.views = {}
 
 MainRouter = require('routers/main_router').MainRouter
-HomeView = require('views/home_view').HomeView
 BookmarkCollection = require('collections/bookmark_collection').BookmarkCollection
 TagscloudCollection = require('collections/tagscloud_collection').TagscloudCollection
 BookmarkCollectionView = require('views/bookmark_collection_view').BookmarkCollectionView
