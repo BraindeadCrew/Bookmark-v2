@@ -68,7 +68,6 @@ $(document).ready(function() {
         el: $('#pagination-bookmarks'),
         template: _.template($('#pagination-template').html()),
         initialize: function() {
-            //console.log("create bookmark collectionview", this.collection);
             this.collection.bind('reset', this.addAll, this);
             this.collection.bind('all', this.render, this);
         },
@@ -91,25 +90,64 @@ $(document).ready(function() {
         }
     }); 
 
-    var TagscloudView = Backbone.View.extend({
-        className: "tagscloud",
-        template: _.template($('#tagscloud-template').html()),
-        el: $('#tagscloud'),
-        page: 1,
+    var TagView = Backbone.View.extend({
+        tagName: "span",
+        className: "tag",
+        template: _.template($('#tag-template').html()),
         events: {
-            "click .unselected":   "selectTag"
+            "click": "addFilter"
         },
-        initialize: function() {
-            //console.log("create tags cloud view ", this.collection);
-            this.collection.bind('reset', this.render, this);
+        addFilter: function() {
+            console.log("add filter", this);
         },
         render: function() {
-            $(this.el).html(this.template({ tags: this.collection.toJSON()}));
+            $(this.el).html(this.template(this.model.toJSON()));
             return this;
+        }
+    });
+
+    var TagFilterView = Backbone.View.extend({
+        className: "tag-filter",
+        events: {
+            "click": "removeFilter"
         },
-        selectTag: function(e) {
-            console.log("tag selected");
-            //this.collection.addFilter(
+        removeFilter: function() {
+            console.log("remove filer", this);
+        },
+        render: function() {
+            $(this.el).html(this.model.name);
+            return this
+        }
+    });
+
+    var TagFilterCollectionView = Backbone.View.extend({
+        className: "tags-filer-collection",
+        initialize: function() {
+           this.collection.bind('all', this.addAll, this);
+        },
+        addAll: function() {
+            $('#tags-filter').empty();
+            this.collection.each(this.addOne);
+        },
+        addOne: function(tag) {
+            var view = new TagFilterView({model: tag});
+            $("#tags-filter").append(view.render().el);
+        }
+    });
+
+
+    var TagscloudView = Backbone.View.extend({
+        className: "tagscloud",
+        initialize: function() {
+            this.collection.bind('reset', this.addAll, this);
+        },
+        addAll: function() {
+            $("#tagscloud").empty();
+            this.collection.each(this.addOne);    
+        },
+        addOne: function(tag) {
+            var view = new TagView({model: tag});
+            $('#tagscloud').append(view.render().el);
         }
     });
 

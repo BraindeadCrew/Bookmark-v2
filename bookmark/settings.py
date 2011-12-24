@@ -2,6 +2,7 @@
 VERSION = '0.0.1'
 NAME = 'bookmark'
 DEBUG = True
+STATIC_FOLDER='web'
 
 SEPARATOR = '+'
 
