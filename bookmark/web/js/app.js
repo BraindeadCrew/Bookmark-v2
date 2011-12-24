@@ -11136,7 +11136,8 @@ window.jQuery = window.$ = jQuery;
 
   $(document).ready(function() {
     app.initialize = function() {
-      var bookmarkCollection, bookmarkCollectionView, tagsCloudCollection, tagscloudView;
+      var bookmarkCollection, bookmarkCollectionView, mainRouter, tagsCloudCollection, tagscloudView;
+      mainRouter = new MainRouter();
       bookmarkCollection = new BookmarkCollection();
       tagsCloudCollection = new TagscloudCollection();
       bookmarkCollectionView = new BookmarkCollectionView({
@@ -11149,6 +11150,7 @@ window.jQuery = window.$ = jQuery;
       tagsCloudCollection.fetch();
     };
     app.initialize();
+    Backbone.history.start();
   });
 
 }).call(this);
@@ -11401,64 +11403,6 @@ window.jQuery = window.$ = jQuery;
       __out.push(__sanitize(this.tag.name));
     
       __out.push('\n</span>\n');
-    
-    }).call(this);
-    
-  }).call(__obj);
-  __obj.safe = __objSafe, __obj.escape = __escape;
-  return __out.join('');
-}}, "templates/tagscloud": function(exports, require, module) {module.exports = function(__obj) {
-  if (!__obj) __obj = {};
-  var __out = [], __capture = function(callback) {
-    var out = __out, result;
-    __out = [];
-    callback.call(this);
-    result = __out.join('');
-    __out = out;
-    return __safe(result);
-  }, __sanitize = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else if (typeof value !== 'undefined' && value != null) {
-      return __escape(value);
-    } else {
-      return '';
-    }
-  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
-  __safe = __obj.safe = function(value) {
-    if (value && value.ecoSafe) {
-      return value;
-    } else {
-      if (!(typeof value !== 'undefined' && value != null)) value = '';
-      var result = new String(value);
-      result.ecoSafe = true;
-      return result;
-    }
-  };
-  if (!__escape) {
-    __escape = __obj.escape = function(value) {
-      return ('' + value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    };
-  }
-  (function() {
-    (function() {
-      var tag, _i, _len, _ref;
-    
-      _ref = this.tags;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        tag = _ref[_i];
-        __out.push('\n<span class="unselected" style="font-size: ');
-        __out.push(__sanitize(tag.size));
-        __out.push('px;">\n    ');
-        __out.push(__sanitize(tag.name));
-        __out.push('\n</span>\n');
-      }
-    
-      __out.push('\n');
     
     }).call(this);
     

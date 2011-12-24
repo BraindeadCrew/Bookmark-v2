@@ -13,6 +13,7 @@ TagscloudView = require('views/tagcloud_view').TagscloudView
 # app bootstrapping on document ready
 $(document).ready ->
   app.initialize = ->
+    mainRouter = new MainRouter()
     bookmarkCollection = new BookmarkCollection()
     tagsCloudCollection = new TagscloudCollection()
 
@@ -23,5 +24,5 @@ $(document).ready ->
     tagsCloudCollection.fetch()
     return
   app.initialize()
-  #Backbone.history.start()
+  Backbone.history.start()
   return
