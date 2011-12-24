@@ -4,11 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bookmark.css') }}">
 {% endblock %}
 {% block head_js %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.6.4.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/json2.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/underscore-1.2.2.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/backbone.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/bookmark.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}
 {% block content %}
 <h1>Cloud</h1>
@@ -16,9 +12,15 @@
 <h1>Bookmarks</h1>
 <div id="bookmarks" class="row span16"></div>
 <div id="pagination-bookmarks"></div>
+
+<script>
+$(document).ready(function() {
+    require('main')
+});
+</script>
 {% endblock %}
 {% block templates %}
 {% include "./tmpl/bookmark.tmpl" %}
-{% include "./tmpl/tagscloud.tmpl" %}
+{% include "./tmpl/tag.tmpl" %}
 {% include "./tmpl/pagination.tmpl" %}
 {% endblock %}

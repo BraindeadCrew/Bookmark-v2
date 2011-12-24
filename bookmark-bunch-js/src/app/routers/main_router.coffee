@@ -1,6 +1,11 @@
 class exports.MainRouter extends Backbone.Router
   routes :
-    "home": "home"
+    "about": "about"
+    "index/page/:page": "bookmark"
 
-  home: ->
-    $('body').html app.views.home.render().el
+  about: ->
+    console.log "about route"
+
+  bookmark: (page) ->
+    console.log "bookmark route" + page
+    

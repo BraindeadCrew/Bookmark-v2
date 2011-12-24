@@ -11040,8 +11040,79 @@ window.jQuery = window.$ = jQuery;
     };
   }
   return this.require.define;
-}).call(this)({"main": function(exports, require, module) {(function() {
-  var HomeView, MainRouter;
+}).call(this)({"collections/bookmark_collection": function(exports, require, module) {(function() {
+  var BookmarkModel, MainRouter,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BookmarkModel = require('models/bookmark_model').BookmarkModel;
+
+  MainRouter = require('routers/main_router').MainRouter;
+
+  exports.BookmarkCollection = (function(_super) {
+
+    __extends(BookmarkCollection, _super);
+
+    function BookmarkCollection() {
+      BookmarkCollection.__super__.constructor.apply(this, arguments);
+    }
+
+    BookmarkCollection.prototype.model = BookmarkModel;
+
+    BookmarkCollection.prototype.url = function() {
+      return "/api/bookmarks/page/" + this.page;
+    };
+
+    BookmarkCollection.prototype.router = MainRouter;
+
+    BookmarkCollection.prototype.page = 1;
+
+    BookmarkCollection.prototype.initialize = function() {
+      return this.router.bind("pagechange", this.loadPage, this);
+    };
+
+    BookmarkCollection.prototype.parse = function(response) {
+      this.per_page = response.per_page;
+      this.total = response.total;
+      return response.bookmarks;
+    };
+
+    BookmarkCollection.prototype.loadPage = function(page) {
+      this.page = page;
+      this.fetch();
+    };
+
+    return BookmarkCollection;
+
+  })(Backbone.Collection);
+
+}).call(this);
+}, "collections/tagscloud_collection": function(exports, require, module) {(function() {
+  var TagModel,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  TagModel = require('models/tag_model').TagModel;
+
+  exports.TagscloudCollection = (function(_super) {
+
+    __extends(TagscloudCollection, _super);
+
+    function TagscloudCollection() {
+      TagscloudCollection.__super__.constructor.apply(this, arguments);
+    }
+
+    TagscloudCollection.prototype.model = TagModel;
+
+    TagscloudCollection.prototype.url = "/api/tagcloud";
+
+    return TagscloudCollection;
+
+  })(Backbone.Collection);
+
+}).call(this);
+}, "main": function(exports, require, module) {(function() {
+  var BookmarkCollection, BookmarkCollectionView, HomeView, MainRouter, TagscloudCollection, TagscloudView;
 
   window.app = {};
 
@@ -11057,17 +11128,64 @@ window.jQuery = window.$ = jQuery;
 
   HomeView = require('views/home_view').HomeView;
 
+  BookmarkCollection = require('collections/bookmark_collection').BookmarkCollection;
+
+  TagscloudCollection = require('collections/tagscloud_collection').TagscloudCollection;
+
+  BookmarkCollectionView = require('views/bookmark_collection_view').BookmarkCollectionView;
+
+  TagscloudView = require('views/tagcloud_view').TagscloudView;
+
   $(document).ready(function() {
     app.initialize = function() {
-      app.routers.main = new MainRouter();
-      app.views.home = new HomeView();
-      if (Backbone.history.getFragment() === '') {
-        return app.routers.main.navigate('home', true);
-      }
+      var bookmarkCollection, bookmarkCollectionView, tagsCloudCollection, tagscloudView;
+      bookmarkCollection = new BookmarkCollection();
+      tagsCloudCollection = new TagscloudCollection();
+      bookmarkCollectionView = new BookmarkCollectionView({
+        collection: bookmarkCollection
+      });
+      tagscloudView = new TagscloudView({
+        collection: tagsCloudCollection
+      });
+      bookmarkCollection.fetch();
+      tagsCloudCollection.fetch();
     };
     app.initialize();
-    return Backbone.history.start();
   });
+
+}).call(this);
+}, "models/bookmark_model": function(exports, require, module) {(function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.BookmarkModel = (function(_super) {
+
+    __extends(BookmarkModel, _super);
+
+    function BookmarkModel() {
+      BookmarkModel.__super__.constructor.apply(this, arguments);
+    }
+
+    return BookmarkModel;
+
+  })(Backbone.Model);
+
+}).call(this);
+}, "models/tag_model": function(exports, require, module) {(function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.TagModel = (function(_super) {
+
+    __extends(TagModel, _super);
+
+    function TagModel() {
+      TagModel.__super__.constructor.apply(this, arguments);
+    }
+
+    return TagModel;
+
+  })(Backbone.Model);
 
 }).call(this);
 }, "routers/main_router": function(exports, require, module) {(function() {
@@ -11083,11 +11201,16 @@ window.jQuery = window.$ = jQuery;
     }
 
     MainRouter.prototype.routes = {
-      "home": "home"
+      "about": "about",
+      "index/page/:page": "bookmark"
     };
 
-    MainRouter.prototype.home = function() {
-      return $('body').html(app.views.home.render().el);
+    MainRouter.prototype.about = function() {
+      return console.log("about route");
+    };
+
+    MainRouter.prototype.bookmark = function(page) {
+      return console.log("bookmark route" + page);
     };
 
     return MainRouter;
@@ -11142,7 +11265,88 @@ window.jQuery = window.$ = jQuery;
   }).call(__obj);
   __obj.safe = __objSafe, __obj.escape = __escape;
   return __out.join('');
-}}, "views/home_view": function(exports, require, module) {(function() {
+}}, "views/bookmark_collection_view": function(exports, require, module) {(function() {
+  var BookmarkView,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BookmarkView = require('views/bookmark_view').BookmarkView;
+
+  exports.BookmarkCollectionView = (function(_super) {
+
+    __extends(BookmarkCollectionView, _super);
+
+    function BookmarkCollectionView() {
+      BookmarkCollectionView.__super__.constructor.apply(this, arguments);
+    }
+
+    BookmarkCollectionView.prototype.className = 'bookmarks';
+
+    BookmarkCollectionView.prototype.el = $('#pagination-bookmarks');
+
+    BookmarkCollectionView.prototype.template = _.template($('#pagination-template').html());
+
+    BookmarkCollectionView.prototype.initialize = function() {
+      this.collection.bind('reset', this.addAll, this);
+      this.collection.bind('all', this.render, this);
+    };
+
+    BookmarkCollectionView.prototype.addAll = function() {
+      $('#bookmarks').empty();
+      this.collection.each(this.addOne);
+      this.render;
+    };
+
+    BookmarkCollectionView.prototype.addOne = function(e) {
+      var view;
+      view = new BookmarkView({
+        model: e
+      });
+      $('#bookmarks').append(view.render().el);
+    };
+
+    BookmarkCollectionView.prototype.render = function() {
+      var ttl_page;
+      ttl_page = Math.ceil(this.collection.total / this.collection.per_page);
+      $(this.el).html(this.template({
+        ttl_page: ttl_page,
+        page: this.collection.page
+      }));
+      return this;
+    };
+
+    return BookmarkCollectionView;
+
+  })(Backbone.View);
+
+}).call(this);
+}, "views/bookmark_view": function(exports, require, module) {(function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.BookmarkView = (function(_super) {
+
+    __extends(BookmarkView, _super);
+
+    function BookmarkView() {
+      BookmarkView.__super__.constructor.apply(this, arguments);
+    }
+
+    BookmarkView.prototype.tagName = 'div';
+
+    BookmarkView.prototype.template = _.template($('#bookmark-template').html());
+
+    BookmarkView.prototype.render = function() {
+      $(this.el).html(this.template(this.model.toJSON()));
+      return this;
+    };
+
+    return BookmarkView;
+
+  })(Backbone.View);
+
+}).call(this);
+}, "views/home_view": function(exports, require, module) {(function() {
   var homeTemplate,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -11165,6 +11369,81 @@ window.jQuery = window.$ = jQuery;
     };
 
     return HomeView;
+
+  })(Backbone.View);
+
+}).call(this);
+}, "views/tag_view": function(exports, require, module) {(function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.TagView = (function(_super) {
+
+    __extends(TagView, _super);
+
+    function TagView() {
+      TagView.__super__.constructor.apply(this, arguments);
+    }
+
+    TagView.prototype.tagName = 'span';
+
+    TagView.prototype.className = 'tag';
+
+    TagView.prototype.template = _.template($('#tag-template').html());
+
+    TagView.prototype.events = {
+      "click": "addFilter"
+    };
+
+    TagView.prototype.addFilter = function() {
+      console.log("add filter", this);
+    };
+
+    TagView.prototype.render = function() {
+      $(this.el).html(this.template(this.model.toJSON()));
+      return this;
+    };
+
+    return TagView;
+
+  })(Backbone.View);
+
+}).call(this);
+}, "views/tagcloud_view": function(exports, require, module) {(function() {
+  var TagView,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  TagView = require('views/tag_view').TagView;
+
+  exports.TagscloudView = (function(_super) {
+
+    __extends(TagscloudView, _super);
+
+    function TagscloudView() {
+      TagscloudView.__super__.constructor.apply(this, arguments);
+    }
+
+    TagscloudView.prototype.className = "tagscloud";
+
+    TagscloudView.prototype.initialize = function() {
+      this.collection.bind('reset', this.addAll, this);
+    };
+
+    TagscloudView.prototype.addAll = function() {
+      $("#tagscloud").empty();
+      this.collection.each(this.addOne);
+    };
+
+    TagscloudView.prototype.addOne = function(tag) {
+      var view;
+      view = new TagView({
+        model: tag
+      });
+      $('#tagscloud').append(view.render().el);
+    };
+
+    return TagscloudView;
 
   })(Backbone.View);
 
