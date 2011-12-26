@@ -11060,26 +11060,19 @@ window.jQuery = window.$ = jQuery;
     BookmarkCollection.prototype.model = BookmarkModel;
 
     BookmarkCollection.prototype.url = function() {
-      return "/api/bookmarks/page/" + this.page;
+      var filters, ret;
+      ret = "/api/bookmarks/page/" + app.routers.main.page;
+      filters = app.collections.tags.urlFilters();
+      if ((filters != null) && filters !== "") ret += '/' + filters;
+      return ret;
     };
 
     BookmarkCollection.prototype.router = MainRouter;
-
-    BookmarkCollection.prototype.page = 1;
-
-    BookmarkCollection.prototype.initialize = function() {
-      return this.router.bind("pagechange", this.loadPage, this);
-    };
 
     BookmarkCollection.prototype.parse = function(response) {
       this.per_page = response.per_page;
       this.total = response.total;
       return response.bookmarks;
-    };
-
-    BookmarkCollection.prototype.loadPage = function(page) {
-      this.page = page;
-      this.fetch();
     };
 
     return BookmarkCollection;
@@ -11104,7 +11097,46 @@ window.jQuery = window.$ = jQuery;
 
     TagscloudCollection.prototype.model = TagModel;
 
-    TagscloudCollection.prototype.url = "/api/tagcloud";
+    TagscloudCollection.prototype.initialize = function() {
+      this.bind('all', function(e) {
+        return console.log("TagscloudCollection", e, this);
+      });
+      return this.bind('change:filter', this.update, this);
+    };
+
+    TagscloudCollection.prototype.url = function() {
+      var filters, ret;
+      ret = "/api/tagcloud";
+      filters = this.urlFilters();
+      if ((filters != null) && filters !== "") ret += '/' + filters;
+      return ret;
+    };
+
+    TagscloudCollection.prototype.getFiltered = function() {
+      return this.filter(function(tag) {
+        return tag.get('filter');
+      });
+    };
+
+    TagscloudCollection.prototype.getUnfiltered = function() {
+      return this.reject(function(tag) {
+        return tag.get('filter');
+      });
+    };
+
+    TagscloudCollection.prototype.update = function() {
+      return this.fetch();
+    };
+
+    TagscloudCollection.prototype.urlFilters = function() {
+      var f, filters, list;
+      f = this.getFiltered();
+      list = _.map(f, function(e) {
+        return e.get('name');
+      });
+      filters = list.join('+');
+      return filters;
+    };
 
     return TagscloudCollection;
 
@@ -11136,21 +11168,17 @@ window.jQuery = window.$ = jQuery;
 
   $(document).ready(function() {
     app.initialize = function() {
-      var bookmarkCollection, bookmarkCollectionView, mainRouter, tagsCloudCollection, tagscloudView;
-      mainRouter = new MainRouter();
-      bookmarkCollection = new BookmarkCollection();
-      tagsCloudCollection = new TagscloudCollection();
-      bookmarkCollectionView = new BookmarkCollectionView({
-        collection: bookmarkCollection
-      });
-      tagscloudView = new TagscloudView({
-        collection: tagsCloudCollection
-      });
-      bookmarkCollection.fetch();
-      tagsCloudCollection.fetch();
+      app.routers.main = new MainRouter();
+      app.collections.bookmarks = new BookmarkCollection();
+      app.collections.tags = new TagscloudCollection();
+      app.views.bookmarkCollection = new BookmarkCollectionView();
+      app.views.tagscloud = new TagscloudView();
+      if (Backbone.history.getFragment() === '') {
+        return app.routers.main.navigate('index/page/1', true);
+      }
     };
     app.initialize();
-    Backbone.history.start();
+    return Backbone.history.start();
   });
 
 }).call(this);
@@ -11183,6 +11211,23 @@ window.jQuery = window.$ = jQuery;
       TagModel.__super__.constructor.apply(this, arguments);
     }
 
+    TagModel.prototype.defaults = {
+      filter: false
+    };
+
+    TagModel.prototype.initialize = function() {
+      if (!(this.filter != null)) this.filter = this.defaults.filter;
+      return this.bind('all', function(e) {
+        return console.log("TagModel", e, this);
+      });
+    };
+
+    TagModel.prototype.switchFilter = function() {
+      return this.set({
+        "filter": !this.get("filter")
+      });
+    };
+
     return TagModel;
 
   })(Backbone.Model);
@@ -11210,7 +11255,9 @@ window.jQuery = window.$ = jQuery;
     };
 
     MainRouter.prototype.bookmark = function(page) {
-      return console.log("bookmark route" + page);
+      this.page = Number(page);
+      app.collections.bookmarks.fetch();
+      return app.collections.tags.fetch();
     };
 
     return MainRouter;
@@ -11330,21 +11377,21 @@ window.jQuery = window.$ = jQuery;
       var i, _ref;
     
       for (i = 1, _ref = this.ttl_page; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
-        __out.push('\n    <span>\n        ');
+        __out.push('\n  <span>\n    ');
         if (i === this.page) {
-          __out.push('\n        ');
+          __out.push('\n      ');
           __out.push(__sanitize(i));
-          __out.push('\n        ');
+          __out.push('\n    ');
         } else {
-          __out.push('\n            <a href="#index/page/');
+          __out.push('\n      <a href="#index/page/');
           __out.push(__sanitize(i));
           __out.push('">');
           __out.push(__sanitize(i));
-          __out.push('</a>\n        ');
+          __out.push('</a>\n    ');
         }
-        __out.push('\n        ');
+        __out.push('\n    ');
         if (i < this.ttl_page) __out.push(',');
-        __out.push('\n    </span>\n');
+        __out.push('\n  </span>\n');
       }
     
       __out.push('\n');
@@ -11431,13 +11478,13 @@ window.jQuery = window.$ = jQuery;
     BookmarkCollectionView.prototype.el = $('#pagination-bookmarks');
 
     BookmarkCollectionView.prototype.initialize = function() {
-      this.collection.bind('reset', this.addAll, this);
-      this.collection.bind('all', this.render, this);
+      app.collections.bookmarks.bind('reset', this.addAll, this);
+      app.collections.bookmarks.bind('all', this.render, this);
     };
 
     BookmarkCollectionView.prototype.addAll = function() {
       $('#bookmarks').empty();
-      this.collection.each(this.addOne);
+      app.collections.bookmarks.each(this.addOne);
       this.render;
     };
 
@@ -11451,8 +11498,8 @@ window.jQuery = window.$ = jQuery;
 
     BookmarkCollectionView.prototype.render = function() {
       var page, ttl_page;
-      ttl_page = Math.ceil(this.collection.total / this.collection.per_page);
-      page = this.collection.page;
+      ttl_page = Math.ceil(app.collections.bookmarks.total / app.collections.bookmarks.per_page);
+      page = app.routers.main.page;
       $(this.el).html(paginationTemplate({
         ttl_page: ttl_page,
         page: page
@@ -11514,11 +11561,11 @@ window.jQuery = window.$ = jQuery;
     TagView.prototype.className = 'tag';
 
     TagView.prototype.events = {
-      "click": "addFilter"
+      "click": "switchFilter"
     };
 
-    TagView.prototype.addFilter = function() {
-      console.log("add filter", this);
+    TagView.prototype.switchFilter = function() {
+      this.model.switchFilter();
     };
 
     TagView.prototype.render = function() {
@@ -11551,20 +11598,42 @@ window.jQuery = window.$ = jQuery;
     TagscloudView.prototype.className = "tagscloud";
 
     TagscloudView.prototype.initialize = function() {
-      this.collection.bind('reset', this.addAll, this);
+      app.collections.tags.bind('all', this.addAll, this);
     };
 
     TagscloudView.prototype.addAll = function() {
+      var functionFilter, tag, _i, _j, _len, _len2, _ref, _ref2;
+      functionFilter = function(tag) {
+        return tag.get('filter');
+      };
       $("#tagscloud").empty();
-      this.collection.each(this.addOne);
+      $("#tags-filter").empty();
+      _ref = app.collections.tags.getUnfiltered();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tag = _ref[_i];
+        this.addOneUnfiltered(tag);
+      }
+      _ref2 = app.collections.tags.getFiltered();
+      for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+        tag = _ref2[_j];
+        this.addOneFiltered(tag);
+      }
     };
 
-    TagscloudView.prototype.addOne = function(tag) {
+    TagscloudView.prototype.addOneUnfiltered = function(tag) {
       var view;
       view = new TagView({
         model: tag
       });
       $('#tagscloud').append(view.render().el);
+    };
+
+    TagscloudView.prototype.addOneFiltered = function(tag) {
+      var view;
+      view = new TagView({
+        model: tag
+      });
+      $('#tags-filter').append(view.render().el);
     };
 
     return TagscloudView;

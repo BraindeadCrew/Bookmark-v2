@@ -8,10 +8,15 @@
 {% endblock %}
 {% block content %}
 <h1>Cloud</h1>
-<div id="tagscloud" class="row span16"></div>
+<div class="row span16">
+    <div>
+        Filters :
+        <span id="tags-filter"></span>
+    </div>
+    <div id="tagscloud"></div>
+</div>
 <h1>Bookmarks</h1>
 <div id="bookmarks" class="row span16"></div>
 <div id="pagination-bookmarks"></div>
-
 <script>require('main')</script>
 {% endblock %}

@@ -10,19 +10,15 @@ TagscloudCollection = require('collections/tagscloud_collection').TagscloudColle
 BookmarkCollectionView = require('views/bookmark_collection_view').BookmarkCollectionView
 TagscloudView = require('views/tagcloud_view').TagscloudView
 
-# app bootstrapping on document ready
 $(document).ready ->
   app.initialize = ->
-    mainRouter = new MainRouter()
-    bookmarkCollection = new BookmarkCollection()
-    tagsCloudCollection = new TagscloudCollection()
+    app.routers.main = new MainRouter()
+    app.collections.bookmarks = new BookmarkCollection()
+    app.collections.tags = new TagscloudCollection()
 
-    bookmarkCollectionView = new BookmarkCollectionView collection: bookmarkCollection
-    tagscloudView = new TagscloudView collection: tagsCloudCollection
+    app.views.bookmarkCollection = new BookmarkCollectionView()
+    app.views.tagscloud = new TagscloudView()
 
-    bookmarkCollection.fetch()
-    tagsCloudCollection.fetch()
-    return
+    app.routers.main.navigate 'index/page/1', true if Backbone.history.getFragment() is ''
   app.initialize()
   Backbone.history.start()
-  return

@@ -4,10 +4,10 @@ class exports.TagView extends Backbone.View
   tagName: 'span'
   className: 'tag'
   events:
-    "click": "addFilter"
-  addFilter: ->
-    console.log "add filter", @
+    "click": "switchFilter"
+  switchFilter: ->
+    @model.switchFilter()
     return
   render: ->
-    $(@el).html tagTemplate(tag: @model.toJSON())
+    $(@el).html tagTemplate tag: @model.toJSON()
     @

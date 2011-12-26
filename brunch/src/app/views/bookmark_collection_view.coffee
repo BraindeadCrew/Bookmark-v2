@@ -5,12 +5,12 @@ class exports.BookmarkCollectionView extends Backbone.View
   className: 'bookmarks'
   el: $('#pagination-bookmarks')
   initialize: ->
-    @collection.bind 'reset', @addAll, @
-    @collection.bind 'all', @render, @
+    app.collections.bookmarks.bind 'reset', @addAll, @
+    app.collections.bookmarks.bind 'all', @render, @
     return
   addAll: ->
     $('#bookmarks').empty()
-    @collection.each @addOne
+    app.collections.bookmarks.each @addOne
     @render
     return
   addOne: (e) ->
@@ -18,7 +18,7 @@ class exports.BookmarkCollectionView extends Backbone.View
     $('#bookmarks').append(view.render().el)
     return
   render: ->
-    ttl_page = Math.ceil(@collection.total / @collection.per_page)
-    page = @collection.page
-    $(@el).html paginationTemplate(ttl_page: ttl_page, page: page)
+    ttl_page = Math.ceil(app.collections.bookmarks.total / app.collections.bookmarks.per_page)
+    page = app.routers.main.page
+    $(@el).html(paginationTemplate(ttl_page: ttl_page, page: page))
     @
