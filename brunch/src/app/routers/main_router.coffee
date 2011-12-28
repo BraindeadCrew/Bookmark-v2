@@ -8,6 +8,6 @@ class exports.MainRouter extends Backbone.Router
 
   bookmark: (page) ->
     #console.log "bookmark route" + page
-    @page = Number(page)
-    app.collections.bookmarks.fetch()
+    page = Number(page)
+    app.collections.bookmarks.fetch data : page : page
     app.collections.tags.fetch()

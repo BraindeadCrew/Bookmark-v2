@@ -11059,11 +11059,18 @@ window.jQuery = window.$ = jQuery;
 
     BookmarkCollection.prototype.model = BookmarkModel;
 
+    BookmarkCollection.prototype.initialize = function() {
+      this.bind('all', function(e) {
+        return console.log("BookmarkCollection", e, this);
+      });
+      app.collections.tags.bind('change', this.update, this);
+    };
+
     BookmarkCollection.prototype.url = function() {
       var filters, ret;
-      ret = "/api/bookmarks/page/" + app.routers.main.page;
+      ret = "/api/bookmarks/";
       filters = app.collections.tags.urlFilters();
-      if ((filters != null) && filters !== "") ret += '/' + filters;
+      if (filters != null) ret += filters;
       return ret;
     };
 
@@ -11072,7 +11079,13 @@ window.jQuery = window.$ = jQuery;
     BookmarkCollection.prototype.parse = function(response) {
       this.per_page = response.per_page;
       this.total = response.total;
+      this.page = response.page;
       return response.bookmarks;
+    };
+
+    BookmarkCollection.prototype.update = function() {
+      console.log('bookmark collection update');
+      return this.fetch();
     };
 
     return BookmarkCollection;
@@ -11169,8 +11182,8 @@ window.jQuery = window.$ = jQuery;
   $(document).ready(function() {
     app.initialize = function() {
       app.routers.main = new MainRouter();
-      app.collections.bookmarks = new BookmarkCollection();
       app.collections.tags = new TagscloudCollection();
+      app.collections.bookmarks = new BookmarkCollection();
       app.views.bookmarkCollection = new BookmarkCollectionView();
       app.views.tagscloud = new TagscloudView();
       if (Backbone.history.getFragment() === '') {
@@ -11255,8 +11268,12 @@ window.jQuery = window.$ = jQuery;
     };
 
     MainRouter.prototype.bookmark = function(page) {
-      this.page = Number(page);
-      app.collections.bookmarks.fetch();
+      page = Number(page);
+      app.collections.bookmarks.fetch({
+        data: {
+          page: page
+        }
+      });
       return app.collections.tags.fetch();
     };
 
@@ -11499,7 +11516,7 @@ window.jQuery = window.$ = jQuery;
     BookmarkCollectionView.prototype.render = function() {
       var page, ttl_page;
       ttl_page = Math.ceil(app.collections.bookmarks.total / app.collections.bookmarks.per_page);
-      page = app.routers.main.page;
+      page = app.collections.bookmarks.page;
       $(this.el).html(paginationTemplate({
         ttl_page: ttl_page,
         page: page

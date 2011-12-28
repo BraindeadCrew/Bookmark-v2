@@ -61,7 +61,7 @@ def get_list_bookmark(filter=None, count=False, page=None, per_page=None):
             .having(func.count(Bookmark.id) == len(filter))
 
     if page is not None and per_page is not None:
-        query = query.limit(per_page).offset((page-1) * per_page)
+        query = query.limit(per_page).offset((page - 1) * per_page)
 
     if count:
         subquery = query.subquery()

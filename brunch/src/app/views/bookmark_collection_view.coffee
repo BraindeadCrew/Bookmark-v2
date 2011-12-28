@@ -19,6 +19,6 @@ class exports.BookmarkCollectionView extends Backbone.View
     return
   render: ->
     ttl_page = Math.ceil(app.collections.bookmarks.total / app.collections.bookmarks.per_page)
-    page = app.routers.main.page
+    page = app.collections.bookmarks.page
     $(@el).html(paginationTemplate(ttl_page: ttl_page, page: page))
     @

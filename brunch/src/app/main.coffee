@@ -13,8 +13,8 @@ TagscloudView = require('views/tagcloud_view').TagscloudView
 $(document).ready ->
   app.initialize = ->
     app.routers.main = new MainRouter()
-    app.collections.bookmarks = new BookmarkCollection()
     app.collections.tags = new TagscloudCollection()
+    app.collections.bookmarks = new BookmarkCollection()
 
     app.views.bookmarkCollection = new BookmarkCollectionView()
     app.views.tagscloud = new TagscloudView()

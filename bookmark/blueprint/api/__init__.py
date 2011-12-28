@@ -18,14 +18,16 @@ def index():
     return VERSION
 
 
-@b.route('/bookmarks/page/<int:page>', methods=['GET', ])
-@b.route('/bookmarks/page/<int:page>/<string:tags>', methods=['GET', ])
-def bookmarks(page, tags=None):
+@b.route('/bookmarks/', methods=['GET', ])
+@b.route('/bookmarks/<string:tags>', methods=['GET', ])
+def bookmarks(tags=None):
     filters = []
     if tags is not None:
         filters = [x.id for x in
             [get_tag(x) for x in tags.split(SEPARATOR)]
             if x is not None]
+
+    page = int(request.args.get('page', "1"))
 
     bookmarks = get_list_bookmark(filter=filters, page=page, per_page=PER_PAGE)
     total = get_list_bookmark(filters, count=True)
@@ -38,6 +40,7 @@ def bookmarks(page, tags=None):
     bookmark_list = map(lambda x: x.json(), bookmark_list)
     ret = {
         "bookmarks": bookmark_list,
+        "page": page,
         "per_page": PER_PAGE,
         "total": total,
     }
@@ -50,18 +53,25 @@ def bookmarks(page, tags=None):
 @b.route('/tagcloud/<string:tags>', methods=['GET', ])
 def tagcloud(tags=None):
     filters = []
+    filters_tags = []
     if tags is not None:
-        filters = [get_tag(x).id for x in tags.split(SEPARATOR)]
+        query_list = [get_tag(x) for x in tags.split(SEPARATOR)]
+        filters_tags = map(lambda x: ItemTag(pid=x.id, pname=x.name,
+            pfilter=True), query_list)
+        filters = map(lambda x: x.id, query_list)
 
     tagcloud = get_tagcloud(filters)
-    tag_list = []
+    filter_list = []
     for (t, count) in tagcloud:
         tag = ItemTag(t.id, t.name, count)
-        tag_list.append(tag)
-    tags_list = map(lambda x: x.json(),
-        tag_list)
+        filter_list.append(tag)
+
+    tags_list = map(lambda x: x.json(), filter_list)
 
     process_tag_count(tags_list, max_percent=30, min_percent=11)
+
+    tags_list = [x.json() for x in filters_tags] + tags_list
+
     response = app.make_response(json.dumps(tags_list))
     response.mimetype = 'application/json'
     return response

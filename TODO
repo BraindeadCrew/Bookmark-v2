@@ -1,7 +1,2 @@
 python :
 move tagscloud module as a dependency outside of the project
-
-backbone
-now filters are added in both collections, but those informations are losts
-during fetch operation.
-Keeping them in a separate central element ?
