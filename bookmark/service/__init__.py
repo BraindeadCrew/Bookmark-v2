@@ -1,4 +1,4 @@
-from bookmark.model import Bookmark, Tag, db
+from bookmark.model import Bookmark, Tag, db, User
 from sqlalchemy import func
 
 
@@ -75,3 +75,7 @@ def add_bookmark(bookmark):
     b = convert_bookmark(bookmark)
     db.session.add(b)
     db.session.commit()
+
+def check_user(pseudo, password):
+    user = User.filter_by(pseudo=pseudo)
+    #passwd =
