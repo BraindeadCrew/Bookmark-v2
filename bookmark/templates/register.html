@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "macros/_textfield.html" import render_textfield %}
+{% block content %}
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <fieldset>
+        <legend>Register</legend>
+        {{ render_textfield(form.login) }}
+        {{ render_textfield(form.password) }}
+        {{ render_textfield(form.password_confirmation) }}
+        <div class="actions">
+            {{ form.submit }}
+        </div>
+    </fieldset>
+</form>
+{% endblock %}

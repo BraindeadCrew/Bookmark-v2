@@ -1,4 +1,6 @@
-from bookmark.model import Bookmark, Tag, db
+from bookmark.model import Bookmark, Tag, db, User
+from werkzeug.security import generate_password_hash
+from werkzeug.security import check_password_hash
 from sqlalchemy import func
 
 
@@ -75,3 +77,53 @@ def add_bookmark(bookmark):
     b = convert_bookmark(bookmark)
     db.session.add(b)
     db.session.commit()
+
+
+def check_user(pseudo, password):
+    """
+    Check is couple pseudo/password match an user.
+    @params pseudo user's pseudo
+    @params passwd user's password
+    @return null if it does not match, User object otherwise.
+    """
+    user = User.filter_by(pseudo=pseudo)
+    #passwd =
+
+
+def add_user(user):
+    """
+    Add an user.
+    @param user user model object.
+    """
+    db.session.add(user)
+    db.session.commit()
+
+
+def count_user_by_pseudo(pseudo):
+    """
+    @param pseudo A pseudo
+    Count number of user with the defined pseudo.
+    """
+    return db.session.query(func.count(User.id))\
+        .filter(User.pseudo == pseudo).first()[0]
+
+
+def check_password(pseudo, password):
+    """
+    @param pseudo A pseudo
+    @param password A password
+    @return None is unknow user or wrong password, user model object otherwire.
+    Check if pseudo and password match an user.
+    """
+    ret = None
+
+    supposed_user = User.query.filter_by(pseudo=pseudo).first()
+    if supposed_user is not None:
+        if check_password_hash(supposed_user.password, password):
+            ret = supposed_user
+
+    return ret
+
+
+def get_user_by_id(userid):
+    return User.query.get(userid)

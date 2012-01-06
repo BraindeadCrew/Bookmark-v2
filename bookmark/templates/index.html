@@ -1,8 +1,4 @@
 {% extends "base.html" %}
-{%block head_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-{% endblock %}
 {% block head_js %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}
@@ -18,5 +14,7 @@
 <h1>Bookmarks</h1>
 <div id="bookmarks" class="row span16"></div>
 <div id="pagination-bookmarks"></div>
-<script>require('main')</script>
+<script type="text/javascript">
+	require('main');
+</script>
 {% endblock %}
