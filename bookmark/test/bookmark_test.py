@@ -1,8 +1,10 @@
 import unittest
 
-from bookmark.model import db
+from bookmark import app
 
-from bookmark.service import add_bookmark
+#from bookmark.model import db
+
+#from bookmark.service import add_bookmark
 
 class BookmarkTest(unittest.TestCase):
     def setUp(self):
@@ -10,8 +12,13 @@ class BookmarkTest(unittest.TestCase):
         db.create_all()
 
     def test_add_bookmark():
+        assert False
 
 
 
     def tearUp():
         db.drop_all()
+
+
+if __name__ == '__main__':
+    unittest.main()

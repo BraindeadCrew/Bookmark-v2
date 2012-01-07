@@ -1,3 +1,6 @@
+"""
+Bookmark flask app
+"""
 from flask import Flask
 
 from flaskext.login import LoginManager
