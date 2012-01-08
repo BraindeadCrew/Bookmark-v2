@@ -1,3 +1,4 @@
+<div class="label right">edit</div>
 <p><a href="<%= @bookmark.link %>"><%= @bookmark.title %></a></p>
 <div>
 <%= @bookmark.description %>

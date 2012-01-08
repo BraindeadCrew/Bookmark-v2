@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "macros/_textfield.html" import render_textfield %}
 {% block head_js %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}
@@ -14,6 +15,25 @@
 <h1>Bookmarks</h1>
 <div id="bookmarks" class="row span16"></div>
 <div id="pagination-bookmarks"></div>
+<div id="bookmark-form-modal" class="modal hide fade"></div>
+<script type="text/template" id="bookmark-form-modal-template">
+    <form action="{{ url_for('api.add_bookmark') }}">
+    {{ form.hidden_tag() }}
+    <div class="modal-header">
+        <a href="#" class="close">×</a>
+        <h3>Add a bookmark</h3>
+    </div>
+    <div class="modal-body"> 
+        {{ render_textfield(form.link) }}
+        {{ render_textfield(form.title) }}
+        {{ render_textfield(form.description) }}
+        {{ render_textfield(form.tags) }}
+    </div>
+    <div class="modal-footer">
+        {{ form.submit(class_="btn primary") }}
+    </div>
+    </form>
+</script>
 <script type="text/javascript">
 	require('main');
 </script>

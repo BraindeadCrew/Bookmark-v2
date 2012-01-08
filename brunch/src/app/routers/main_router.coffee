@@ -11,3 +11,4 @@ class exports.MainRouter extends Backbone.Router
     page = Number(page)
     app.collections.bookmarks.fetch data : page : page
     app.collections.tags.fetch()
+    app.views.bookmarkForm.render()

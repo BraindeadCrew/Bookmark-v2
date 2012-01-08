@@ -10991,6 +10991,267 @@ window.jQuery = window.$ = jQuery;
 
 }).call(this);
 
+/* =========================================================
+ * bootstrap-modal.js v1.4.0
+ * http://twitter.github.com/bootstrap/javascript.html#modal
+ * =========================================================
+ * Copyright 2011 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ========================================================= */
+
+
+!function( $ ){
+
+  "use strict"
+
+ /* CSS TRANSITION SUPPORT (https://gist.github.com/373874)
+  * ======================================================= */
+
+  var transitionEnd
+
+  $(document).ready(function () {
+
+    $.support.transition = (function () {
+      var thisBody = document.body || document.documentElement
+        , thisStyle = thisBody.style
+        , support = thisStyle.transition !== undefined || thisStyle.WebkitTransition !== undefined || thisStyle.MozTransition !== undefined || thisStyle.MsTransition !== undefined || thisStyle.OTransition !== undefined
+      return support
+    })()
+
+    // set CSS transition event type
+    if ( $.support.transition ) {
+      transitionEnd = "TransitionEnd"
+      if ( $.browser.webkit ) {
+      	transitionEnd = "webkitTransitionEnd"
+      } else if ( $.browser.mozilla ) {
+      	transitionEnd = "transitionend"
+      } else if ( $.browser.opera ) {
+      	transitionEnd = "oTransitionEnd"
+      }
+    }
+
+  })
+
+
+ /* MODAL PUBLIC CLASS DEFINITION
+  * ============================= */
+
+  var Modal = function ( content, options ) {
+    this.settings = $.extend({}, $.fn.modal.defaults, options)
+    this.$element = $(content)
+      .delegate('.close', 'click.modal', $.proxy(this.hide, this))
+
+    if ( this.settings.show ) {
+      this.show()
+    }
+
+    return this
+  }
+
+  Modal.prototype = {
+
+      toggle: function () {
+        return this[!this.isShown ? 'show' : 'hide']()
+      }
+
+    , show: function () {
+        var that = this
+        this.isShown = true
+        this.$element.trigger('show')
+
+        escape.call(this)
+        backdrop.call(this, function () {
+          var transition = $.support.transition && that.$element.hasClass('fade')
+
+          that.$element
+            .appendTo(document.body)
+            .show()
+
+          if (transition) {
+            that.$element[0].offsetWidth // force reflow
+          }
+
+          that.$element.addClass('in')
+
+          transition ?
+            that.$element.one(transitionEnd, function () { that.$element.trigger('shown') }) :
+            that.$element.trigger('shown')
+
+        })
+
+        return this
+      }
+
+    , hide: function (e) {
+        e && e.preventDefault()
+
+        if ( !this.isShown ) {
+          return this
+        }
+
+        var that = this
+        this.isShown = false
+
+        escape.call(this)
+
+        this.$element
+          .trigger('hide')
+          .removeClass('in')
+
+        $.support.transition && this.$element.hasClass('fade') ?
+          hideWithTransition.call(this) :
+          hideModal.call(this)
+
+        return this
+      }
+
+  }
+
+
+ /* MODAL PRIVATE METHODS
+  * ===================== */
+
+  function hideWithTransition() {
+    // firefox drops transitionEnd events :{o
+    var that = this
+      , timeout = setTimeout(function () {
+          that.$element.unbind(transitionEnd)
+          hideModal.call(that)
+        }, 500)
+
+    this.$element.one(transitionEnd, function () {
+      clearTimeout(timeout)
+      hideModal.call(that)
+    })
+  }
+
+  function hideModal (that) {
+    this.$element
+      .hide()
+      .trigger('hidden')
+
+    backdrop.call(this)
+  }
+
+  function backdrop ( callback ) {
+    var that = this
+      , animate = this.$element.hasClass('fade') ? 'fade' : ''
+    if ( this.isShown && this.settings.backdrop ) {
+      var doAnimate = $.support.transition && animate
+
+      this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
+        .appendTo(document.body)
+
+      if ( this.settings.backdrop != 'static' ) {
+        this.$backdrop.click($.proxy(this.hide, this))
+      }
+
+      if ( doAnimate ) {
+        this.$backdrop[0].offsetWidth // force reflow
+      }
+
+      this.$backdrop.addClass('in')
+
+      doAnimate ?
+        this.$backdrop.one(transitionEnd, callback) :
+        callback()
+
+    } else if ( !this.isShown && this.$backdrop ) {
+      this.$backdrop.removeClass('in')
+
+      $.support.transition && this.$element.hasClass('fade')?
+        this.$backdrop.one(transitionEnd, $.proxy(removeBackdrop, this)) :
+        removeBackdrop.call(this)
+
+    } else if ( callback ) {
+       callback()
+    }
+  }
+
+  function removeBackdrop() {
+    this.$backdrop.remove()
+    this.$backdrop = null
+  }
+
+  function escape() {
+    var that = this
+    if ( this.isShown && this.settings.keyboard ) {
+      $(document).bind('keyup.modal', function ( e ) {
+        if ( e.which == 27 ) {
+          that.hide()
+        }
+      })
+    } else if ( !this.isShown ) {
+      $(document).unbind('keyup.modal')
+    }
+  }
+
+
+ /* MODAL PLUGIN DEFINITION
+  * ======================= */
+
+  $.fn.modal = function ( options ) {
+    var modal = this.data('modal')
+
+    if (!modal) {
+
+      if (typeof options == 'string') {
+        options = {
+          show: /show|toggle/.test(options)
+        }
+      }
+
+      return this.each(function () {
+        $(this).data('modal', new Modal(this, options))
+      })
+    }
+
+    if ( options === true ) {
+      return modal
+    }
+
+    if ( typeof options == 'string' ) {
+      modal[options]()
+    } else if ( modal ) {
+      modal.toggle()
+    }
+
+    return this
+  }
+
+  $.fn.modal.Modal = Modal
+
+  $.fn.modal.defaults = {
+    backdrop: false
+  , keyboard: false
+  , show: false
+  }
+
+
+ /* MODAL DATA- IMPLEMENTATION
+  * ========================== */
+
+  $(document).ready(function () {
+    $('body').delegate('[data-controls-modal]', 'click', function (e) {
+      e.preventDefault()
+      var $this = $(this).data('show', true)
+      $('#' + $this.attr('data-controls-modal')).modal( $this.data() )
+    })
+  })
+
+}( window.jQuery || window.ender );
+
 (function(/*! Stitch !*/) {
   if (!this.require) {
     var modules = {}, cache = {}, require = function(name, root) {
@@ -11157,7 +11418,7 @@ window.jQuery = window.$ = jQuery;
 
 }).call(this);
 }, "main": function(exports, require, module) {(function() {
-  var BookmarkCollection, BookmarkCollectionView, MainRouter, TagscloudCollection, TagscloudView;
+  var BookmarkCollection, BookmarkCollectionView, BookmarkFormView, MainRouter, TagscloudCollection, TagscloudView;
 
   window.app = {};
 
@@ -11179,6 +11440,8 @@ window.jQuery = window.$ = jQuery;
 
   TagscloudView = require('views/tagcloud_view').TagscloudView;
 
+  BookmarkFormView = require('views/bookmark_form_view').BookmarkFormView;
+
   $(document).ready(function() {
     app.initialize = function() {
       app.routers.main = new MainRouter();
@@ -11186,12 +11449,20 @@ window.jQuery = window.$ = jQuery;
       app.collections.bookmarks = new BookmarkCollection();
       app.views.bookmarkCollection = new BookmarkCollectionView();
       app.views.tagscloud = new TagscloudView();
+      app.views.bookmarkForm = new BookmarkFormView();
       if (Backbone.history.getFragment() === '') {
         return app.routers.main.navigate('index/page/1', true);
       }
     };
     app.initialize();
-    return Backbone.history.start();
+    Backbone.history.start();
+    return $("#bookmark-form-modal").bind("hidden", function() {
+      $("#link").val("");
+      $("#title").val("");
+      $("#description").val("");
+      $("#tags").val("");
+      $("#id").val("");
+    });
   });
 
 }).call(this);
@@ -11274,7 +11545,8 @@ window.jQuery = window.$ = jQuery;
           page: page
         }
       });
-      return app.collections.tags.fetch();
+      app.collections.tags.fetch();
+      return app.views.bookmarkForm.render();
     };
 
     return MainRouter;
@@ -11323,7 +11595,7 @@ window.jQuery = window.$ = jQuery;
     (function() {
       var tag, _i, _len, _ref;
     
-      __out.push('<p><a href="');
+      __out.push('<div class="label right">edit</div>\n<p><a href="');
     
       __out.push(__sanitize(this.bookmark.link));
     
@@ -11393,25 +11665,35 @@ window.jQuery = window.$ = jQuery;
     (function() {
       var i, _ref;
     
+      __out.push('<div class="pagination">\n    <ul>\n        <li class="prev');
+    
+      if (!this.has_prev) __out.push(' disabled');
+    
+      __out.push('">\n            <a href="#index/page/');
+    
+      __out.push(__sanitize(this.page - 1));
+    
+      __out.push('">\n                Prev.\n            </a>\n        </li>\n        ');
+    
       for (i = 1, _ref = this.ttl_page; 1 <= _ref ? i <= _ref : i >= _ref; 1 <= _ref ? i++ : i--) {
-        __out.push('\n  <span>\n    ');
-        if (i === this.page) {
-          __out.push('\n      ');
-          __out.push(__sanitize(i));
-          __out.push('\n    ');
-        } else {
-          __out.push('\n      <a href="#index/page/');
-          __out.push(__sanitize(i));
-          __out.push('">');
-          __out.push(__sanitize(i));
-          __out.push('</a>\n    ');
-        }
-        __out.push('\n    ');
-        if (i < this.ttl_page) __out.push(',');
-        __out.push('\n  </span>\n');
+        __out.push('\n        <li ');
+        if (i === this.page) __out.push('class="active"');
+        __out.push('>\n            <a href="#index/page/');
+        __out.push(__sanitize(i));
+        __out.push('">');
+        __out.push(__sanitize(i));
+        __out.push('</a>\n        </li>\n        ');
       }
     
-      __out.push('\n');
+      __out.push('\n        <li class="next');
+    
+      if (!this.has_next) __out.push(' disabled');
+    
+      __out.push('">\n            <a href="#index/page/');
+    
+      __out.push(__sanitize(this.page + 1));
+    
+      __out.push('">\n                Next.\n            </a>\n        </li>\n    </ul>\n</div>\n');
     
     }).call(this);
     
@@ -11514,17 +11796,58 @@ window.jQuery = window.$ = jQuery;
     };
 
     BookmarkCollectionView.prototype.render = function() {
-      var page, ttl_page;
+      var has_next, has_prev, page, ttl_page;
       ttl_page = Math.ceil(app.collections.bookmarks.total / app.collections.bookmarks.per_page);
       page = app.collections.bookmarks.page;
+      has_prev = page > 1;
+      has_next = page < ttl_page;
       $(this.el).html(paginationTemplate({
         ttl_page: ttl_page,
-        page: page
+        page: page,
+        has_prev: has_prev,
+        has_next: has_next
       }));
       return this;
     };
 
     return BookmarkCollectionView;
+
+  })(Backbone.View);
+
+}).call(this);
+}, "views/bookmark_form_view": function(exports, require, module) {(function() {
+  var __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  exports.BookmarkFormView = (function(_super) {
+
+    __extends(BookmarkFormView, _super);
+
+    function BookmarkFormView() {
+      BookmarkFormView.__super__.constructor.apply(this, arguments);
+    }
+
+    BookmarkFormView.prototype.tagName = 'div';
+
+    BookmarkFormView.prototype.el = $('#bookmark-form-modal');
+
+    BookmarkFormView.prototype.template = _.template($("#bookmark-form-modal-template").html());
+
+    BookmarkFormView.prototype.events = {
+      "click #submit": "submitForm"
+    };
+
+    BookmarkFormView.prototype.render = function() {
+      $(this.el).html(this.template());
+      return this;
+    };
+
+    BookmarkFormView.prototype.submitForm = function(e) {
+      e.preventDefault();
+      return this;
+    };
+
+    return BookmarkFormView;
 
   })(Backbone.View);
 
@@ -11546,11 +11869,24 @@ window.jQuery = window.$ = jQuery;
 
     BookmarkView.prototype.tagName = 'div';
 
+    BookmarkView.prototype.events = {
+      "click .label": "editBookmark"
+    };
+
     BookmarkView.prototype.render = function() {
       $(this.el).html(bookmarkTemplate({
         bookmark: this.model.toJSON()
       }));
       return this;
+    };
+
+    BookmarkView.prototype.editBookmark = function() {
+      console.log(this);
+      $("#link").val(this.model.get("link"));
+      $("#title").val(this.model.get("title"));
+      $("#description").val(this.model.get("description"));
+      $("#tags").val(this.model.get("tags"));
+      return $("#bookmark-form-modal").modal("toggle");
     };
 
     return BookmarkView;

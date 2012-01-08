@@ -1,4 +1,6 @@
 from flask import Blueprint, request
+from functools import wraps
+
 
 from bookmark import app
 from bookmark.settings import VERSION, PER_PAGE, SEPARATOR
@@ -7,11 +9,20 @@ from bookmark.service import get_tagcloud, get_tag, get_list_bookmark
 from tagscloud import process_tag_count
 from .item.Bookmark import ItemBookmark
 from .item.Tag import ItemTag
+from .form import BookmarkForm
 
 import json
 
 b = Blueprint('api', __name__)
 
+def json_result_decorator(f):
+    @wraps(f)
+    def json_result(*args, **kwargs):
+        dumped = json.dumps(f(*args, **kwargs))
+        response = app.make_response(dumped)
+        response.mimetype = 'application/json'
+        return response
+    return json_result
 
 @b.route('/', methods=['GET', ])
 def index():
@@ -20,6 +31,7 @@ def index():
 
 @b.route('/bookmarks/', methods=['GET', ])
 @b.route('/bookmarks/<string:tags>', methods=['GET', ])
+@json_result_decorator
 def bookmarks(tags=None):
     filters = []
     if tags is not None:
@@ -44,13 +56,27 @@ def bookmarks(tags=None):
         "per_page": PER_PAGE,
         "total": total,
     }
-    response = app.make_response(json.dumps(ret))
-    response.mimetype = 'application/json'
-    return response
+
+    return ret
+
+
+@b.route('/bookmarks/', methods=['POST', ])
+@json_result_decorator
+def add_bookmark():
+    form = BookmarkForm(create=True)
+    ret = None
+    if form.validate_on_submit():
+        # register form
+        ret = ["OK"]
+    else:
+        ret = form.errors
+    return ret
+
 
 
 @b.route('/tagcloud', methods=['GET', ])
 @b.route('/tagcloud/<string:tags>', methods=['GET', ])
+@json_result_decorator
 def tagcloud(tags=None):
     filters = []
     filters_tags = []
@@ -67,11 +93,7 @@ def tagcloud(tags=None):
         filter_list.append(tag)
 
     tags_list = map(lambda x: x.json(), filter_list)
-
     process_tag_count(tags_list, max_percent=30, min_percent=11)
-
     tags_list = [x.json() for x in filters_tags] + tags_list
 
-    response = app.make_response(json.dumps(tags_list))
-    response.mimetype = 'application/json'
-    return response
+    return tags_list

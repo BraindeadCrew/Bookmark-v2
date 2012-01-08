@@ -1,10 +1,19 @@
-<% for i in [1 .. @ttl_page]: %>
-  <span>
-    <% if i == @page: %>
-      <%= i %>
-    <% else: %>
-      <a href="#index/page/<%= i %>"><%= i %></a>
-    <% end %>
-    <% if i < @ttl_page: %>,<% end %>
-  </span>
-<% end %>
+<div class="pagination">
+    <ul>
+        <li class="prev<% if !@has_prev: %> disabled<% end %>">
+            <a href="#index/page/<%= @page - 1 %>">
+                Prev.
+            </a>
+        </li>
+        <% for i in [1 .. @ttl_page]: %>
+        <li <% if i == @page: %>class="active"<% end %>>
+            <a href="#index/page/<%= i %>"><%= i %></a>
+        </li>
+        <% end %>
+        <li class="next<% if !@has_next: %> disabled<% end %>">
+            <a href="#index/page/<%= @page + 1 %>">
+                Next.
+            </a>
+        </li>
+    </ul>
+</div>

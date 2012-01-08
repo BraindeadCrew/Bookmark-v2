@@ -1,5 +1,5 @@
 from flaskext.wtf import Form
-from wtforms import validators
+from flaskext.wtf import validators
 from flaskext.wtf import TextField, PasswordField, SubmitField
 from flaskext.wtf import BooleanField
 from flaskext.wtf import ValidationError
