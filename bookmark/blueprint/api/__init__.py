@@ -51,7 +51,7 @@ def bookmarks(tags=None):
 
 @b.route('/bookmarks/', methods=['POST', ])
 def add_bookmark():
-    form = BookmarkForm(create=True, json=request.json)
+    form = BookmarkForm(request.json, create=True)
     ret = None
     if form.validate_on_submit():
         # register form
