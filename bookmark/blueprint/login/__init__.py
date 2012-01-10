@@ -26,7 +26,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         # login and valide the user...
-        login_user(form.user)
+        login_user(form.user, remember=form.remember.data)
         return redirect(request.args.get('next') or url_for('web.index'))
     return render_template('login.html', form=form)
 

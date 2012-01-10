@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from functools import wraps
 
 
@@ -11,18 +11,7 @@ from .item.Bookmark import ItemBookmark
 from .item.Tag import ItemTag
 from .form import BookmarkForm
 
-import json
-
 b = Blueprint('api', __name__)
-
-def json_result_decorator(f):
-    @wraps(f)
-    def json_result(*args, **kwargs):
-        dumped = json.dumps(f(*args, **kwargs))
-        response = app.make_response(dumped)
-        response.mimetype = 'application/json'
-        return response
-    return json_result
 
 @b.route('/', methods=['GET', ])
 def index():
@@ -31,7 +20,6 @@ def index():
 
 @b.route('/bookmarks/', methods=['GET', ])
 @b.route('/bookmarks/<string:tags>', methods=['GET', ])
-@json_result_decorator
 def bookmarks(tags=None):
     filters = []
     if tags is not None:
@@ -57,26 +45,25 @@ def bookmarks(tags=None):
         "total": total,
     }
 
-    return ret
+    return jsonify(ret)
 
 
 @b.route('/bookmarks/', methods=['POST', ])
-@json_result_decorator
 def add_bookmark():
-    form = BookmarkForm(create=True)
+    form = BookmarkForm(create=True, json=request.json)
     ret = None
     if form.validate_on_submit():
         # register form
+        add_bookmark(form.bookmark)
         ret = ["OK"]
     else:
         ret = form.errors
-    return ret
+    return jsonify(ret)
 
 
 
 @b.route('/tagcloud', methods=['GET', ])
 @b.route('/tagcloud/<string:tags>', methods=['GET', ])
-@json_result_decorator
 def tagcloud(tags=None):
     filters = []
     filters_tags = []
@@ -94,6 +81,6 @@ def tagcloud(tags=None):
 
     tags_list = map(lambda x: x.json(), filter_list)
     process_tag_count(tags_list, max_percent=30, min_percent=11)
-    tags_list = [x.json() for x in filters_tags] + tags_list
+    tags_list = {"tags": [x.json() for x in filters_tags] + tags_list}
 
-    return tags_list
+    return jsonify(tags_list)

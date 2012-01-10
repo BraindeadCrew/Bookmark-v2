@@ -11412,6 +11412,10 @@ window.jQuery = window.$ = jQuery;
       return filters;
     };
 
+    TagscloudCollection.prototype.parse = function(response) {
+      return response.tags;
+    };
+
     return TagscloudCollection;
 
   })(Backbone.Collection);
@@ -11816,8 +11820,11 @@ window.jQuery = window.$ = jQuery;
 
 }).call(this);
 }, "views/bookmark_form_view": function(exports, require, module) {(function() {
-  var __hasProp = Object.prototype.hasOwnProperty,
+  var BookmarkModel,
+    __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BookmarkModel = require('models/bookmark_model').BookmarkModel;
 
   exports.BookmarkFormView = (function(_super) {
 
@@ -11834,7 +11841,11 @@ window.jQuery = window.$ = jQuery;
     BookmarkFormView.prototype.template = _.template($("#bookmark-form-modal-template").html());
 
     BookmarkFormView.prototype.events = {
-      "click #submit": "submitForm"
+      "submit": "submitForm"
+    };
+
+    BookmarkFormView.prototype.initialize = function() {
+      return app.collections.bookmarks.bind("show-bookmark-form", this.showBookmarkForm);
     };
 
     BookmarkFormView.prototype.render = function() {
@@ -11843,8 +11854,34 @@ window.jQuery = window.$ = jQuery;
     };
 
     BookmarkFormView.prototype.submitForm = function(e) {
+      var bookmark, datas, id;
       e.preventDefault();
-      return this;
+      id = $("#id").val();
+      if (_.isNumber(id)) {
+        bookmark = app.collections.bookmarks.get($("#id").val());
+      } else {
+        bookmark = new BookmarkModel;
+      }
+      datas = {
+        link: $("#link").val(),
+        title: $("#title").val(),
+        description: $("#description").val(),
+        tags: $("#tags").val(),
+        csrf: $("#csrf").val()
+      };
+      if (!_.isNumber(id)) app.collections.bookmarks.add(bookmark);
+      bookmark.save(datas, {
+        error: function(model, errors) {
+          return console.log("error", model, errors);
+        },
+        success: function(model, errors) {
+          return console.log("success", model, errors);
+        }
+      });
+    };
+
+    BookmarkFormView.prototype.showBookmarkForm = function(bookmarkId) {
+      return console.log("catchec", bookmarkId);
     };
 
     return BookmarkFormView;
@@ -11881,12 +11918,7 @@ window.jQuery = window.$ = jQuery;
     };
 
     BookmarkView.prototype.editBookmark = function() {
-      console.log(this);
-      $("#link").val(this.model.get("link"));
-      $("#title").val(this.model.get("title"));
-      $("#description").val(this.model.get("description"));
-      $("#tags").val(this.model.get("tags"));
-      return $("#bookmark-form-modal").modal("toggle");
+      return this.trigger("show-bookmark-form", $('#id').val());
     };
 
     return BookmarkView;

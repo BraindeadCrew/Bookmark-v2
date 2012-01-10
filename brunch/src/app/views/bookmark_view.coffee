@@ -8,9 +8,4 @@ class exports.BookmarkView extends Backbone.View
     $(@el).html bookmarkTemplate(bookmark: @model.toJSON())
     @
   editBookmark: ->
-   console.log @
-   $("#link").val @model.get "link"
-   $("#title").val @model.get "title"
-   $("#description").val @model.get "description"
-   $("#tags").val @model.get "tags"
-   $("#bookmark-form-modal").modal "toggle"
+   @trigger "show-bookmark-form", $('#id').val()

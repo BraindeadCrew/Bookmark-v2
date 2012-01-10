@@ -25,3 +25,5 @@ class exports.TagscloudCollection extends Backbone.Collection
         e.get('name')
     filters = list.join('+')
     return filters
+  parse: (response) ->
+    response.tags
