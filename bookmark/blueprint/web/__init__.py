@@ -8,5 +8,5 @@ b = Blueprint('web', __name__)
 
 @b.route('/', methods=['GET', ])
 def index():
-    form = BookmarkForm(True)
+    form = BookmarkForm(create=True)
     return render_template('index.html', form=form)

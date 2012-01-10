@@ -4,7 +4,7 @@ Bookmark flask app
 from flask import Flask
 
 from flaskext.login import LoginManager
-from flaskext.debugtoolbar import DebugToolbarExtension
+#from flaskext.debugtoolbar import DebugToolbarExtension
 
 
 from bookmark import settings

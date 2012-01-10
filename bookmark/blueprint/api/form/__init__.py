@@ -18,12 +18,11 @@ class BookmarkForm(Form):
     tags = TextField(u'Tags')
     submit = SubmitField(u'Add')
 
-    def __init__(self, create, json=None, *args, **kwargs):
-        if json is not None:
-            dico = MultiDict(json.items())
-            kwargs['formdata'] = dico
-        Form.__init__(self, *args, **kwargs)
-        self.create = create
+    def __init__(self, formdata=None, *args, **kwargs):
+        if formdata is not None:
+            formdata = MultiDict(formdata.items())
+        self.create = kwargs.get('create', False)
+        super(BookmarkForm, self).__init__(formdata, *args, **kwargs)
 
     def validate(self):
         rv = Form.validate(self)
