@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
-
+from bookmark import service
 
 from bookmark import app
 from bookmark.settings import VERSION, PER_PAGE, SEPARATOR
@@ -12,6 +12,7 @@ from .item.Tag import ItemTag
 from .form import BookmarkForm
 
 b = Blueprint('api', __name__)
+
 
 @b.route('/', methods=['GET', ])
 def index():
@@ -54,12 +55,11 @@ def add_bookmark():
     ret = None
     if form.validate_on_submit():
         # register form
-        add_bookmark(form.bookmark)
+        service.add_bookmark(form.bookmark)
         ret = ["OK"]
     else:
         ret = form.errors
     return jsonify(ret)
-
 
 
 @b.route('/tagcloud', methods=['GET', ])

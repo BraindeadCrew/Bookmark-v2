@@ -7,18 +7,17 @@ CLASSIFIERS = [
 ]
 
 setup(
-    name = "Bookmark",
-    version = "0.0.1",
-    packages = find_packages(),
-    scripts = ['manage.py'],
-    install_requires= [
+    name="Bookmark",
+    version="0.0.1",
+    packages=find_packages(),
+    scripts=['manage.py'],
+    install_requires=[
         'Flask>=0.8',
         'Flask-Login>=0.1',
         'Flask-SQLAlchemy>=0.15',
         'Flask-WTF>=0.5',
-        'flask-csrf>=0.9',
     ],
-    package_data = {
+    package_data={
         '': ['*.txt', '*.rst'],
     },
     author="Daroth",
