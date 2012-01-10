@@ -9,7 +9,14 @@ from bookmark.blueprint.api.item.Bookmark import ItemBookmark
 from werkzeug.datastructures import MultiDict
 
 
-class BookmarkForm(Form):
+class AjaxForm(Form):
+    def __init__(self, formdata=None, *args, **kwargs):
+        if formdata is not None:
+            formdata = MultiDict(formdata.items())
+        super(AjaxForm, self).__init__(formdata, *args, **kwargs)
+
+
+class BookmarkForm(AjaxForm):
     id = HiddenField(u'Id')
     link = URLField(u'Link', validators=[validators.required(),
         validators.url(), ])
@@ -19,8 +26,6 @@ class BookmarkForm(Form):
     submit = SubmitField(u'Add')
 
     def __init__(self, formdata=None, *args, **kwargs):
-        if formdata is not None:
-            formdata = MultiDict(formdata.items())
         self.create = kwargs.get('create', False)
         super(BookmarkForm, self).__init__(formdata, *args, **kwargs)
 
