@@ -73,13 +73,8 @@ def tagcloud(tags=None):
             pfilter=True), query_list)
         filters = map(lambda x: x.id, query_list)
 
-    tagcloud = get_tagcloud(filters)
-    filter_list = []
-    for (t, count) in tagcloud:
-        tag = ItemTag(t.id, t.name, count)
-        filter_list.append(tag)
-
-    tags_list = map(lambda x: x.json(), filter_list)
+    cloud = get_tagcloud(filters)
+    tags_list = [ItemTag(t.id, t.name, count).json() for t, count in cloud]
     process_tag_count(tags_list, max_percent=30, min_percent=11)
     tags_list = {"tags": [x.json() for x in filters_tags] + tags_list}
 
