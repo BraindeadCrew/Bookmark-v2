@@ -6,7 +6,11 @@
                 <li class="activae"><a href="#index">Index</a></li>
                 <li><a href="#about">About</a></li>
                 {% if current_user.is_authenticated() %}
-                <li><a href="#" data-controls-modal="bookmark-form-modal">Add a bookmark</a></li>
+                <li>
+                    <a href="#" data-controls-modal="bookmark-form-modal" id="add-bookmark">
+                        Add a bookmark
+                    </a>
+                </li>
                 <li><a href="{{ url_for("user.logout") }}">Logout</a></li>
                 {% else %}
                 <li><a href="{{ url_for("user.login") }}">Login</a></li>

@@ -5,6 +5,8 @@ import logging
 from werkzeug.security import generate_password_hash
 from flaskext.login import UserMixin
 
+from sqlalchemy import func
+
 db = SQLAlchemy(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
@@ -27,6 +29,13 @@ class Bookmark(db.Model):
     link = db.Column(db.String(255), unique=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text(), nullable=False)
+    update_time = db.Column(db.DateTime(), db.PassiveDefault(func.now()), nullable=False)
+
+    def __init__(self, tags=None, link=None, title=None, description=None):
+        self.tags = tags if tags is not None else []
+        self.link = link
+        self.title = title
+        self.description = description
 
     def __repr__(self):
         return '<Bookmark (%d, %s %s) %s>' % (self.id, self.title, self.link,
@@ -51,4 +60,4 @@ class User(db.Model, UserMixin):
 
     def __init__(self, pseudo, password):
         self.pseudo = pseudo
-        self.password = generate_password_hash(password)
+        self.password = generate_password_hash(password, salt_length=settings.SALT_LENGTH)

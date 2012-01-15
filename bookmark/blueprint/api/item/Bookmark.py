@@ -1,23 +1,28 @@
 class ItemBookmark:
-    def __init__(self, pid=None, ptags=None, plink='', ptitle='',
-        pdescription='', json=False):
-        self._id = pid
+    def __init__(self, _id=None, tags=None, link='', title='', description=''):
+        self._id = _id
         self.tags = []
-        if ptags is not None:
-            for t in ptags:
-                if json:
-                    self.tags.append(t['name'])
-                else:
-                    self.tags.append(t.name)
-        self.link = plink
-        self.title = ptitle
-        self.description = pdescription
+        self.set_tags(tags)
+        self.link = link
+        self.title = title
+        self.description = description
 
     def json(self):
         return {
-            '_id': self._id,
+            'id': self._id,
             'tags': self.tags,
             'link': self.link,
             'title': self.title,
             'description': self.description,
         }
+
+    def set_tags(self, tags):
+        """
+        populate a tags list with tags param
+        """
+        if tags is not None:
+            for t in tags:
+                if type(t) is dict:
+                    self.tags.append(t['name'])
+                else:
+                    self.tags.append(t.name)

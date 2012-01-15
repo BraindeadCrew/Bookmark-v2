@@ -1,4 +1,4 @@
-<div class="label right">edit</div>
+<div class="label right" data-controls-modal="bookmark-form-modal">edit</div>
 <p><a href="<%= @bookmark.link %>"><%= @bookmark.title %></a></p>
 <div>
 <%= @bookmark.description %>

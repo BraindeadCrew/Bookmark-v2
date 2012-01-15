@@ -25,10 +25,5 @@ $(document).ready ->
   app.initialize()
   Backbone.history.start()
 
-  $("#bookmark-form-modal").bind "hidden", () ->
-    $("#link").val ""
-    $("#title").val ""
-    $("#description").val ""
-    $("#tags").val ""
-    $("#id").val ""
-    return
+  $("#add-bookmark").click () ->
+    app.collections.bookmarks.trigger "show-bookmark-form"

@@ -7,7 +7,9 @@ from flaskext.wtf import SubmitField
 from flaskext.wtf.html5 import URLField
 from bookmark.blueprint.api.item.Bookmark import ItemBookmark
 from werkzeug.datastructures import MultiDict
+from bookmark.service import get_bookmark_by_id
 
+from flask import abort
 
 class AjaxForm(Form):
     def __init__(self, formdata=None, *args, **kwargs):
@@ -17,16 +19,19 @@ class AjaxForm(Form):
 
 
 class BookmarkForm(AjaxForm):
-    id = HiddenField(u'Id')
+    _id = HiddenField(u'Id')
     link = URLField(u'Link', validators=[validators.required(),
         validators.url(), ])
     title = TextField(u'Title', validators=[validators.required(), ])
     description = TextAreaField(u'Description')
     tags = TextField(u'Tags')
     submit = SubmitField(u'Add')
+    edit = SubmitField(u'Edit')
 
     def __init__(self, formdata=None, *args, **kwargs):
-        self.create = kwargs.get('create', False)
+        print "***********************"
+        print kwargs
+        self._id.data = kwargs.get('id', None)
         super(BookmarkForm, self).__init__(formdata, *args, **kwargs)
 
     def validate(self):
@@ -34,13 +39,29 @@ class BookmarkForm(AjaxForm):
         if not rv:
             return False
 
+        _id = self._id.data
         link = self.link.data
         title = self.title.data
         description = self.description.data
         tags = map(lambda x: {'name': x.strip()}, self.tags.data.split(','))
 
-        # TODO : add id control if create is False (modification mode need a
-        # valid bookmark id)
-        self.bookmark = ItemBookmark(ptags=tags, plink=link, ptitle=title,
-            pdescription=description, json=True)
+        print "##################################"
+        print "___%s___" % (_id)
+        print _id is ''
+        print _id is None
+        print _id < 1
+        print _id is None or _id < 1
+        print type(_id)
+
+        if _id is None or _id is '' or _id < 1:
+            self.bookmark = ItemBookmark(tags=tags, link=link, title=title, description=description)
+        else:
+            self.bookmark = get_bookmark_by_id(_id)
+            if self.bookmark is None:
+                abort(404)
+            #self.bookmark.link = link
+            self.bookmark.title = title
+            self.bookmark.description = description
+            self.bookmark.set_tags(tags)
+
         return True

@@ -48,6 +48,9 @@ def get_tagcloud(filter=None):
     return query.group_by(Tag.id).all()
 
 
+def get_bookmark_by_id(id):
+    return Bookmark.query.get(id)
+
 def get_list_bookmark(filter=None, count=False, page=None, per_page=None):
     """
     solution pour le count, faire une sous requete qui sera ensuite
@@ -63,7 +66,7 @@ def get_list_bookmark(filter=None, count=False, page=None, per_page=None):
             .having(func.count(Bookmark.id) == len(filter))
 
     if page is not None and per_page is not None:
-        query = query.limit(per_page).offset((page - 1) * per_page)
+        query = query.order_by(Bookmark.update_time.desc()).limit(per_page).offset((page - 1) * per_page)
 
     if count:
         subquery = query.subquery()
@@ -79,15 +82,10 @@ def add_bookmark(bookmark):
     db.session.commit()
 
 
-def check_user(pseudo, password):
-    """
-    Check is couple pseudo/password match an user.
-    @params pseudo user's pseudo
-    @params passwd user's password
-    @return null if it does not match, User object otherwise.
-    """
-    user = User.filter_by(pseudo=pseudo)
-    #passwd =
+def edit_bookmark(bookmark):
+    b = convert_bookmark(bookmark)
+
+    db.session.commit()
 
 
 def add_user(user):

@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from functools import wraps
 from bookmark import service
 
@@ -10,6 +10,12 @@ from tagscloud import process_tag_count
 from .item.Bookmark import ItemBookmark
 from .item.Tag import ItemTag
 from .form import BookmarkForm
+
+from flaskext.wtf import Form
+
+from sqlalchemy.exc import IntegrityError
+
+from bookmark.settings import CSRF_SESSION_KEY
 
 b = Blueprint('api', __name__)
 
@@ -49,16 +55,51 @@ def bookmarks(tags=None):
     return jsonify(ret)
 
 
+@b.route('/bookmarks/<int:id>', methods=['PUT', ])
+def update_bookmark(id):
+    form = BookmarkForm(request.json, id=id)
+    if form.validate_on_submit():
+        service.edit_bookmark(form.bookmark)
+        ret = {
+            "success": {
+                "csrf": session.get(session.get(CSRF_SESSION_KEY)),
+            },
+        }
+    else:
+        ret = {
+            "errors": form.errors
+        }
+    return jsonify(ret)
+
+
 @b.route('/bookmarks/', methods=['POST', ])
 def add_bookmark():
-    form = BookmarkForm(request.json, create=True)
+    form = BookmarkForm(request.json)
     ret = None
     if form.validate_on_submit():
         # register form
-        service.add_bookmark(form.bookmark)
-        ret = ["OK"]
+        try:
+            service.add_bookmark(form.bookmark)
+            Form().reset_csrf()
+            ret = {
+                "success": {
+                    "csrf": session.get(session.get(CSRF_SESSION_KEY)),
+                },
+
+            }
+        except IntegrityError, e:
+            errors = []
+            if e.message == '(IntegrityError) column link is not unique':
+                errors.append("Link alredy exists")
+            ret = {
+                "errors": {
+                    "link": errors,
+                }
+            }
     else:
-        ret = form.errors
+        ret = {
+            "errors": form.errors
+        }
     return jsonify(ret)
 
 

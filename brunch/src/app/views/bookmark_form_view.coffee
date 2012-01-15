@@ -7,23 +7,43 @@ class exports.BookmarkFormView extends Backbone.View
   events:
     "submit": "submitForm"
   initialize: ->
-    app.collections.bookmarks.bind "show-bookmark-form", @showBookmarkForm
-  render: ->
-    $(@el).html(@template())
+    @idSelector = "#id"
+    @linkSelector = "#link"
+    @titleSelector = "#title"
+    @descriptionSelector = "#description"
+    @tagsSelector = "#tags"
+    @csrfSelector = "#csrf"
+
+    app.collections.bookmarks.bind "show-bookmark-form", @showBookmarkForm, @
+  render: (model) ->
+    console.log "render form template"
+    $(@el).html @template()
+    if model
+        $(@idSelector).val model.id
+        $(@linkSelector).val model.get("link")
+        $(@titleSelector).val model.get("title")
+        $(@descriptionSelector).val model.get("description")
+        $(@tagsSelector).val model.get("tags")
+        $("#bookmark-form-modal .update").show()
+    else
+        $("#bookmark-form-modal .create").show()
+        
     @
   submitForm: (e) ->
     e.preventDefault()
-    id = $("#id").val()
+    id = parseInt $("#id").val()
+    datas =
+      link: $(@linkSelector).val()
+      title: $(@titleSelector).val()
+      description: $(@descriptionSelector).val()
+      tags: $(@tagsSelector).val()
+      csrf: $(@csrfSelector).val()
+
     if _.isNumber id
       bookmark = app.collections.bookmarks.get $("#id").val()
     else
       bookmark = new BookmarkModel
-    datas =
-      link: $("#link").val()
-      title: $("#title").val()
-      description: $("#description").val()
-      tags: $("#tags").val()
-      csrf: $("#csrf").val()
+
 
     if !_.isNumber id
       app.collections.bookmarks.add bookmark
@@ -33,5 +53,5 @@ class exports.BookmarkFormView extends Backbone.View
       success: (model, errors) ->
         console.log "success", model, errors
     return
-  showBookmarkForm: (bookmarkId) ->
-    console.log "catchec", bookmarkId
+  showBookmarkForm: (model) ->
+    @render(model)
