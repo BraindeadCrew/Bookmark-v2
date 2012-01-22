@@ -6,7 +6,7 @@ SECRET_KEY = "you must definitly change this!"
 CSRF_SESSION_KEY = "_csrf_token"
 MIN_PASSWORD_LENGTH = 1  # at least 6 in prod env
 STATIC_FOLDER = 'web'
-SALT_LENGTH=142
+SALT_LENGTH = 142
 
 SEPARATOR = '+'
 

@@ -21,6 +21,7 @@ class ItemBookmark:
         populate a tags list with tags param
         """
         if tags is not None:
+            self.tags = []
             for t in tags:
                 if type(t) is dict:
                     self.tags.append(t['name'])

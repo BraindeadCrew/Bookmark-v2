@@ -11,6 +11,7 @@ from bookmark.service import get_bookmark_by_id
 
 from flask import abort
 
+
 class AjaxForm(Form):
     def __init__(self, formdata=None, *args, **kwargs):
         if formdata is not None:
@@ -19,7 +20,7 @@ class AjaxForm(Form):
 
 
 class BookmarkForm(AjaxForm):
-    _id = HiddenField(u'Id')
+    id = HiddenField(u'Id')
     link = URLField(u'Link', validators=[validators.required(),
         validators.url(), ])
     title = TextField(u'Title', validators=[validators.required(), ])
@@ -29,9 +30,7 @@ class BookmarkForm(AjaxForm):
     edit = SubmitField(u'Edit')
 
     def __init__(self, formdata=None, *args, **kwargs):
-        print "***********************"
-        print kwargs
-        self._id.data = kwargs.get('id', None)
+        self.id.data = kwargs.get('id', None)
         super(BookmarkForm, self).__init__(formdata, *args, **kwargs)
 
     def validate(self):
@@ -39,27 +38,19 @@ class BookmarkForm(AjaxForm):
         if not rv:
             return False
 
-        _id = self._id.data
+        _id = self.id.data
         link = self.link.data
         title = self.title.data
         description = self.description.data
         tags = map(lambda x: {'name': x.strip()}, self.tags.data.split(','))
 
-        print "##################################"
-        print "___%s___" % (_id)
-        print _id is ''
-        print _id is None
-        print _id < 1
-        print _id is None or _id < 1
-        print type(_id)
-
-        if _id is None or _id is '' or _id < 1:
-            self.bookmark = ItemBookmark(tags=tags, link=link, title=title, description=description)
+        if _id is None or _id == '' or int(_id) < 1:
+            self.bookmark = ItemBookmark(tags=tags, link=link, title=title,
+                description=description)
         else:
             self.bookmark = get_bookmark_by_id(_id)
             if self.bookmark is None:
                 abort(404)
-            #self.bookmark.link = link
             self.bookmark.title = title
             self.bookmark.description = description
             self.bookmark.set_tags(tags)

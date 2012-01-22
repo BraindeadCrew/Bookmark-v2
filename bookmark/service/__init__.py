@@ -2,14 +2,17 @@ from bookmark.model import Bookmark, Tag, db, User
 from werkzeug.security import generate_password_hash
 from werkzeug.security import check_password_hash
 from sqlalchemy import func
+from bookmark.blueprint.api.item.Bookmark import ItemBookmark
 
 
-def convert_bookmark(bookmark):
-    b = Bookmark()
+def convert_bookmark(bookmark, b=None):
+    if b is None:
+        b = Bookmark()
     b.id = bookmark._id
     b.link = bookmark.link
     b.title = bookmark.title
     b.description = bookmark.description
+    b.tags = []
     if bookmark.tags is not None:
         for tag in bookmark.tags:
             b.tags.append(get_tag_or_create(tag))
@@ -49,7 +52,17 @@ def get_tagcloud(filter=None):
 
 
 def get_bookmark_by_id(id):
-    return Bookmark.query.get(id)
+    bookmark = Bookmark.query.get(id)
+
+    ret = ItemBookmark()
+
+    ret._id = bookmark.id
+    ret.tags = ", ".join([x.name for x in bookmark.tags])
+    ret.title = bookmark.title
+    ret.description = bookmark.description
+    ret.link = bookmark.link
+    return ret
+
 
 def get_list_bookmark(filter=None, count=False, page=None, per_page=None):
     """
@@ -66,8 +79,10 @@ def get_list_bookmark(filter=None, count=False, page=None, per_page=None):
             .having(func.count(Bookmark.id) == len(filter))
 
     if page is not None and per_page is not None:
-        query = query.order_by(Bookmark.update_time.desc()).limit(per_page).offset((page - 1) * per_page)
-
+        offset_value = (page - 1) * per_page
+        query = query.order_by(Bookmark.update_time.desc())\
+            .limit(per_page)\
+            .offset(offset_value)
     if count:
         subquery = query.subquery()
         return db.session.query(func.count(Bookmark.id))\
@@ -83,8 +98,10 @@ def add_bookmark(bookmark):
 
 
 def edit_bookmark(bookmark):
-    b = convert_bookmark(bookmark)
-
+    old = Bookmark.query.get(bookmark._id)
+    convert_bookmark(bookmark, old)
+    print "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    print old
     db.session.commit()
 
 

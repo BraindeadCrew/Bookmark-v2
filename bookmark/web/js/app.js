@@ -11859,14 +11859,16 @@ window.jQuery = window.$ = jQuery;
       this.descriptionSelector = "#description";
       this.tagsSelector = "#tags";
       this.csrfSelector = "#csrf";
+      this.csrfTokenSelector = "#bookmark-csrf";
       return app.collections.bookmarks.bind("show-bookmark-form", this.showBookmarkForm, this);
     };
 
     BookmarkFormView.prototype.render = function(model) {
-      console.log("render form template");
       $(this.el).html(this.template());
+      $(this.csrfSelector).val($(this.csrfTokenSelector).val());
       if (model) {
         $(this.idSelector).val(model.id);
+        $(this.linkSelector).attr("disabled", "disabled");
         $(this.linkSelector).val(model.get("link"));
         $(this.titleSelector).val(model.get("title"));
         $(this.descriptionSelector).val(model.get("description"));
@@ -11874,6 +11876,7 @@ window.jQuery = window.$ = jQuery;
         $("#bookmark-form-modal .update").show();
       } else {
         $("#bookmark-form-modal .create").show();
+        $(this.idSelector).val("");
       }
       return this;
     };
@@ -11896,11 +11899,61 @@ window.jQuery = window.$ = jQuery;
       }
       if (!_.isNumber(id)) app.collections.bookmarks.add(bookmark);
       bookmark.save(datas, {
-        error: function(model, errors) {
-          return console.log("error", model, errors);
-        },
-        success: function(model, errors) {
-          return console.log("success", model, errors);
+        success: function(model, response) {
+          var err, errors, _i, _j, _k, _l, _len, _len2, _len3, _len4, _len5, _m, _ref, _ref2, _ref3, _ref4, _ref5, _results;
+          $("#bookmark-csrf").val(response.csrf);
+          $("#csrf").val(response.csrf);
+          if (response.errors != null) {
+            errors = response.errors;
+            if (errors.link) {
+              $("#link").parent().parent().addClass("error");
+              $("#link").next().empty();
+              _ref = errors.link;
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                err = _ref[_i];
+                $("#link").next().append(err);
+              }
+            }
+            if (errors.title) {
+              $("#title").parent().parent().addClass("error");
+              $("#title").next().empty();
+              _ref2 = errors.title;
+              for (_j = 0, _len2 = _ref2.length; _j < _len2; _j++) {
+                err = _ref2[_j];
+                $("#title").next().append(err);
+              }
+            }
+            if (errors.description) {
+              $("#description").parent().parent().addClass("error");
+              $("#description").next().empty();
+              _ref3 = errors.description;
+              for (_k = 0, _len3 = _ref3.length; _k < _len3; _k++) {
+                err = _ref3[_k];
+                $("#description").next().append(err);
+              }
+            }
+            if (errors.tags) {
+              $("#tags").parent().parent().addClass("error");
+              $("#tags").next().empty();
+              _ref4 = errors.tags;
+              for (_l = 0, _len4 = _ref4.length; _l < _len4; _l++) {
+                err = _ref4[_l];
+                $("#tags").next().append(err);
+              }
+            }
+            if (errors.csrf) {
+              $("#global-errors").empty();
+              _ref5 = errors.csrf;
+              _results = [];
+              for (_m = 0, _len5 = _ref5.length; _m < _len5; _m++) {
+                err = _ref5[_m];
+                _results.push($("#global-errors").append(err));
+              }
+              return _results;
+            }
+          } else {
+            return $("#bookmark-form-modal").modal('hide');
+          }
         }
       });
     };

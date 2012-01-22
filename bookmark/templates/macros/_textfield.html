@@ -3,13 +3,13 @@
     {{ field.label }}
     <div class="input">
         {{ field }}
-        {% if field.errors %}
-            <span class="help-inline">
-            {% for error in field.errors %}
-                {{ error }}
-            {% endfor %}
-            </span>
-        {% endif %}
+        <span class="help-inline">
+        {#
+        {% for error in field.errors %}
+            {{ error }}
+        {% endfor %}
+        #}
+        </span>
     </div>
 </div>
 {% endmacro %}

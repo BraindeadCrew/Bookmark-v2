@@ -11,8 +11,6 @@ from .item.Bookmark import ItemBookmark
 from .item.Tag import ItemTag
 from .form import BookmarkForm
 
-from flaskext.wtf import Form
-
 from sqlalchemy.exc import IntegrityError
 
 from bookmark.settings import CSRF_SESSION_KEY
@@ -60,15 +58,13 @@ def update_bookmark(id):
     form = BookmarkForm(request.json, id=id)
     if form.validate_on_submit():
         service.edit_bookmark(form.bookmark)
-        ret = {
-            "success": {
-                "csrf": session.get(session.get(CSRF_SESSION_KEY)),
-            },
-        }
+        ret = {}
     else:
         ret = {
             "errors": form.errors
         }
+    BookmarkForm().reset_csrf()
+    ret["csrf"] = session.get(CSRF_SESSION_KEY)
     return jsonify(ret)
 
 
@@ -77,16 +73,9 @@ def add_bookmark():
     form = BookmarkForm(request.json)
     ret = None
     if form.validate_on_submit():
-        # register form
         try:
             service.add_bookmark(form.bookmark)
-            Form().reset_csrf()
-            ret = {
-                "success": {
-                    "csrf": session.get(session.get(CSRF_SESSION_KEY)),
-                },
-
-            }
+            ret = {}
         except IntegrityError, e:
             errors = []
             if e.message == '(IntegrityError) column link is not unique':
@@ -98,8 +87,11 @@ def add_bookmark():
             }
     else:
         ret = {
-            "errors": form.errors
+            "errors": form.errors,
         }
+
+    BookmarkForm().reset_csrf()
+    ret["csrf"] = session.get(CSRF_SESSION_KEY)
     return jsonify(ret)
 
 
