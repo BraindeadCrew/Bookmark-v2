@@ -3,6 +3,10 @@
 {% block head_js %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}
+{% block head_rss %}
+<link rel="alternate" type="application/rss+xml" title="Recent bookmarks" href="{{ url_for('web.new_bookmarks_feed') }}" />
+
+{% endblock %}
 {% block content %}
 <h1>Cloud</h1>
 <div class="row span16">
