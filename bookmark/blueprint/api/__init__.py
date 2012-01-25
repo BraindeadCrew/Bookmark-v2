@@ -112,3 +112,4 @@ def tagcloud(tags=None):
     tags_list = {"tags": [x.json() for x in filters_tags] + tags_list}
 
     return jsonify(tags_list)
+
