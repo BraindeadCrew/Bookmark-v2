@@ -16,6 +16,7 @@ setup(
         'Flask-Login>=0.1',
         'Flask-SQLAlchemy>=0.15',
         'Flask-WTF>=0.5',
+        'BeautifulSoup>=3.2.0',
     ],
     package_data={
         '': ['*.txt', '*.rst'],
