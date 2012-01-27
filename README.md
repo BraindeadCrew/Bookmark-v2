@@ -12,3 +12,5 @@ client side 100% backbone
   adding a bookmark bookmark's button
   adding a way to easily configure differents configurations for dev and production environments
   moving tagscloud module as a dependency outside of the project
+  adding a delicious import script
+  admin/contributor/anonymous roles
