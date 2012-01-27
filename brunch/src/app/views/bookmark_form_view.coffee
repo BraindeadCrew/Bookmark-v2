@@ -75,6 +75,8 @@ class exports.BookmarkFormView extends Backbone.View
                 $("#global-errors").append err for err in errors.csrf
         else
             $("#bookmark-form-modal").modal('hide')
+            window.location = "#index/page/1"
+            app.collections.bookmarks.fetch()
     return
   showBookmarkForm: (model) ->
     @render(model)

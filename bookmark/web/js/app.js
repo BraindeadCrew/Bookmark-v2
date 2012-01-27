@@ -11952,7 +11952,9 @@ window.jQuery = window.$ = jQuery;
               return _results;
             }
           } else {
-            return $("#bookmark-form-modal").modal('hide');
+            $("#bookmark-form-modal").modal('hide');
+            window.location = "#index/page/1";
+            return app.collections.bookmarks.fetch();
           }
         }
       });
