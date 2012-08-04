@@ -2,22 +2,18 @@
 Bookmark flask app
 """
 from flask import Flask
-
-from flaskext.login import LoginManager
+from flask_login import LoginManager
 #from flaskext.debugtoolbar import DebugToolbarExtension
+from bookmark.config import Configuration
 
 
-from bookmark import settings
-
-app = Flask(settings.NAME, static_folder=settings.STATIC_FOLDER)
-app.config['DEBUG'] = settings.DEBUG
-app.config['SECRET_KEY'] = settings.SECRET_KEY
-app.config['CSRF_ENABLED'] = True
-app.config['CSRF_SESSION_KEY '] = settings.CSRF_SESSION_KEY
+app = Flask(__name__, static_folder=Configuration.STATIC_FOLDER)
+app.config.from_object('bookmark.config.Configuration')
+app.config.from_envvar('SALMON_LOCAL_SETTINGS', silent=True)
 
 
 login_manager = LoginManager()
-login_manager.setup_app(app)
+login_manager.init_app(app)
 
 #if settings.DEBUG:
 #    toolbar = DebugToolbarExtension(app)

@@ -1,10 +1,10 @@
-from flaskext.wtf import Form
-from flaskext.wtf import validators
-from flaskext.wtf import TextField, PasswordField, SubmitField
-from flaskext.wtf import BooleanField
-from flaskext.wtf import ValidationError
-from bookmark import settings
+from flask_wtf import Form
+from flask_wtf import validators
+from flask_wtf import TextField, PasswordField, SubmitField
+from flask_wtf import BooleanField
+from flask_wtf import ValidationError
 from bookmark.model import User
+from bookmark import app
 from bookmark.service import count_user_by_pseudo
 from bookmark.service import check_password
 
@@ -59,10 +59,10 @@ class RegisterForm(Form):
     login = TextField(u'Login', validators=[validators.required(),
         unique_user, ])
     password = PasswordField(u'Password', validators=[validators.required(),
-        validators.length(min=settings.MIN_PASSWORD_LENGTH), ])
+        validators.length(min=app.config['MIN_PASSWORD_LENGTH']), ])
     password_confirmation = PasswordField(u'Password confirmation',
         validators=[validators.required(),
-        validators.length(min=settings.MIN_PASSWORD_LENGTH), ])
+        validators.length(min=app.config['MIN_PASSWORD_LENGTH']), ])
     submit = SubmitField(u'Register')
 
     def __init__(self, *args, ** kwargs):

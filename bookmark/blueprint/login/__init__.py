@@ -5,8 +5,8 @@ from flask import redirect
 from flask import url_for
 from flask import request
 import bookmark
-from flaskext.login import login_user
-from flaskext.login import logout_user
+from flask_login import login_user
+from flask_login import logout_user
 from flask.templating import render_template
 from bookmark.service import add_user
 from bookmark.service import get_user_by_id

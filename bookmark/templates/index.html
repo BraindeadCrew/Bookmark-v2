@@ -25,7 +25,7 @@
     hidden field which contains currents csrf token, copied where needed
     in case of form submission
     #}
-    <input type="hidden" id="bookmark-csrf" value="{{ form.csrf.data }}" />
+    <input type="hidden" id="bookmark-csrf" value="{{ form.csrf_token }}" />
 </div>
 
 {#

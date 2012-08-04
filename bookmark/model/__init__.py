@@ -1,9 +1,9 @@
-from flaskext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 from bookmark import app, settings
 import logging
 from werkzeug.security import generate_password_hash
-from flaskext.login import UserMixin
+from flask_login import UserMixin
 
 from sqlalchemy import func
 
@@ -29,7 +29,7 @@ class Bookmark(db.Model):
     link = db.Column(db.String(255), unique=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text(), nullable=False)
-    update_time = db.Column(db.DateTime(), db.PassiveDefault(func.now()),
+    update_time = db.Column(db.DateTime(), db.DefaultClause(func.now()),
         nullable=False)
 
     def __init__(self, tags=None, link=None, title=None, description=None):

@@ -8,20 +8,22 @@ CLASSIFIERS = [
 
 setup(
     name="Bookmark",
-    version="0.0.1",
+    version="0.0.1-SNAPSHOT",
     packages=find_packages(),
     scripts=['manage.py'],
     install_requires=[
-        'Flask>=0.8',
-        'Flask-Login>=0.1',
+        'Flask>=0.9',
+        'Flask-Login>=0.1.3',
         'Flask-SQLAlchemy>=0.15',
-        'Flask-WTF>=0.5',
+        'Flask-WTF>=0.8',
         'BeautifulSoup>=3.2.0',
+        'Flask-Script>=0.3.3',
+        'Flask-DebugToolbar>=0.1.3',
     ],
     package_data={
         '': ['*.txt', '*.rst'],
     },
-    author="Daroth",
+    author='Daroth',
     author_email='daroth@braindead.fr',
     description='Web bookmark manager',
     license='Beerware',
