@@ -21,7 +21,7 @@ setup(
         'Flask-DebugToolbar>=0.1.3',
     ],
     package_data={
-        '': ['*.txt', '*.rst'],
+        '': ['*.txt', '*.rst', '*.html'],
     },
     author='Daroth',
     author_email='daroth@braindead.fr',

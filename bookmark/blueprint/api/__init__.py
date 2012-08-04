@@ -3,7 +3,6 @@ from functools import wraps
 from bookmark import service
 
 from bookmark import app
-from bookmark.settings import VERSION, PER_PAGE, SEPARATOR
 from bookmark.service import get_tagcloud, get_tag, get_list_bookmark
 
 from tagscloud import process_tag_count
@@ -12,8 +11,6 @@ from .item.Tag import ItemTag
 from .form import BookmarkForm
 
 from sqlalchemy.exc import IntegrityError
-
-from bookmark.settings import CSRF_SESSION_KEY
 
 b = Blueprint('api', __name__)
 
@@ -34,7 +31,7 @@ def bookmarks(tags=None):
 
     page = int(request.args.get('page', "1"))
 
-    bookmarks = get_list_bookmark(filter=filters, page=page, per_page=PER_PAGE)
+    bookmarks = get_list_bookmark(filter=filters, page=page, per_page=app.config['PER_PAGE'])
     total = get_list_bookmark(filters, count=True)
     bookmark_list = []
 
@@ -46,7 +43,7 @@ def bookmarks(tags=None):
     ret = {
         "bookmarks": bookmark_list,
         "page": page,
-        "per_page": PER_PAGE,
+        "per_page": app.config['PER_PAGE'],
         "total": total,
     }
 
@@ -63,8 +60,8 @@ def update_bookmark(id):
         ret = {
             "errors": form.errors
         }
-    BookmarkForm().reset_csrf()
-    ret["csrf"] = session.get(CSRF_SESSION_KEY)
+    #BookmarkForm().reset_csrf()
+    ret["csrf"] = session.get(app.config['CSRF_SESSION_KEY'])
     return jsonify(ret)
 
 
