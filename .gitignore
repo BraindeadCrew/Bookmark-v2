@@ -4,3 +4,4 @@ Bookmark.egg-info
 build
 dist
 activate
+local_settings.cfg

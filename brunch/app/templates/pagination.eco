@@ -1,0 +1,27 @@
+<div class="pagination">
+    <ul>
+        <li class="prev<% if !@has_prev: %> disabled<% end %>">
+            <% if @has_prev: %>
+                <a href="#index/page/<%= @page - 1 %>">
+            <% else: %>
+                <a>
+            <% end %>
+                Prev.
+            </a>
+        </li>
+        <% for i in [1 .. @ttl_page]: %>
+        <li <% if i == @page: %>class="active"<% end %>>
+            <a href="#index/page/<%= i %>"><%= i %></a>
+        </li>
+        <% end %>
+        <li class="next<% if !@has_next: %> disabled<% end %>">
+            <% if @has_next: %>
+                <a href="#index/page/<%= @page + 1 %>">
+            <% else: %> 
+                <a>
+            <% end %>
+                Next.
+            </a>
+        </li>
+    </ul>
+</div>
