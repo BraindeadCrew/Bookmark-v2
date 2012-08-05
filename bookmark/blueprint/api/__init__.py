@@ -26,7 +26,7 @@ def bookmarks(tags=None):
     filters = []
     if tags is not None:
         filters = [x.id for x in
-            [get_tag(x) for x in tags.split(SEPARATOR)]
+            [get_tag(x) for x in tags.split(app.config['SEPARATOR'])]
             if x is not None]
 
     page = int(request.args.get('page', "1"))
@@ -98,7 +98,7 @@ def tagcloud(tags=None):
     filters = []
     filters_tags = []
     if tags is not None:
-        query_list = [get_tag(x) for x in tags.split(SEPARATOR)]
+        query_list = [get_tag(x) for x in tags.split(app.config['SEPARATOR'])]
         filters_tags = map(lambda x: ItemTag(pid=x.id, pname=x.name,
             pfilter=True), query_list)
         filters = map(lambda x: x.id, query_list)
