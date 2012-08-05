@@ -11295,7 +11295,7 @@
 
                 BookmarkCollection.prototype.url = function () {
                     var filters, ret;
-                    ret = "/api/bookmarks/";
+                    ret = "/bookmark/api/bookmarks/";
                     filters = app.collections.tags.urlFilters();
                     if (filters != null) ret += filters;
                     return ret;
@@ -11359,7 +11359,7 @@
 
                 TagscloudCollection.prototype.url = function () {
                     var filters, ret;
-                    ret = "/api/tagcloud";
+                    ret = "/bookmark/api/tagcloud";
                     filters = this.urlFilters();
                     if ((filters != null) && filters !== "") ret += '/' + filters;
                     return ret;
