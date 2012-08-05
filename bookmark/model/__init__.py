@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from bookmark import app, settings
+from bookmark import app
 import logging
 from werkzeug.security import generate_password_hash
 from flask_login import UserMixin

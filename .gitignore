@@ -4,5 +4,8 @@ Bookmark.egg-info
 build
 dist
 activate
+<<<<<<< HEAD
 local_settings.cfg
 node_modules
+=======
+>>>>>>> parent of 5a22b33... manuel modification of app.js for testing purpose

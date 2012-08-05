@@ -1,9 +1,0 @@
-{
-  "files": [
-    {
-      "from": "file.styl.hbs",
-      "to": "app/views/styles/{{name}}.styl"
-    }
-  ],
-  "dependencies": []
-}

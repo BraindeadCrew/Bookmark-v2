@@ -1,3 +1,0 @@
-<span class="unselected" style="font-size: <%= @tag.size %>px;">
-    <%= @tag.name %>
-</span>
