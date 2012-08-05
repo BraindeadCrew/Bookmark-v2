@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 
-from bookmark import app
+from bookmark import app, settings
 import logging
 from werkzeug.security import generate_password_hash
 from flask_login import UserMixin
@@ -8,6 +8,9 @@ from flask_login import UserMixin
 from sqlalchemy import func
 
 db = SQLAlchemy(app)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = settings.SQLALCHEMY_DATABASE_URI
+
 
 logging.basicConfig()
 logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
@@ -59,4 +62,4 @@ class User(db.Model, UserMixin):
     def __init__(self, pseudo, password):
         self.pseudo = pseudo
         self.password = generate_password_hash(password,
-            salt_length=app.config['SALT_LENGTH'])
+            salt_length=settings.SALT_LENGTH)
