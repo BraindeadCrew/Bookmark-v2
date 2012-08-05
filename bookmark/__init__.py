@@ -3,7 +3,8 @@ Bookmark flask app
 """
 from flask import Flask
 from flask_login import LoginManager
-from flaskext.debugtoolbar import DebugToolbarExtension
+from flask_debugtoolbar import DebugToolbarExtension
+from bookmark.config import Configuration
 
 
 app = Flask(__name__, static_folder=Configuration.STATIC_FOLDER)
@@ -15,8 +16,8 @@ app.config.from_envvar('SALMON_LOCAL_SETTINGS')
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-#if settings.DEBUG:
-#    toolbar = DebugToolbarExtension(app)
+if app.config['DEBUG']:
+    toolbar = DebugToolbarExtension(app)
 
 from bookmark.blueprint import api
 from bookmark.blueprint import web

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% from "macros/_textfield.html" import render_textfield %}
 {% block head_js %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/underscore-min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/backbone-min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}
 {% block head_rss %}
