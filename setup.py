@@ -10,7 +10,7 @@ setup(
     name="Bookmark",
     version="0.0.1-SNAPSHOT",
     packages=find_packages(),
-    scripts=['manage.py'],
+    scripts=['manage.py', 'import.py', ],
     install_requires=[
         'Flask>=0.9',
         'Flask-Login>=0.1.3',
