@@ -3,11 +3,7 @@ Bookmark flask app
 """
 from flask import Flask
 from flask_login import LoginManager
-<<<<<<< HEAD
 from flask_debugtoolbar import DebugToolbarExtension
-=======
-#from flaskext.debugtoolbar import DebugToolbarExtension
->>>>>>> parent of 5a22b33... manuel modification of app.js for testing purpose
 from bookmark.config import Configuration
 
 
@@ -26,6 +22,7 @@ from bookmark.blueprint import api
 from bookmark.blueprint import web
 from bookmark.blueprint import login
 
-app.register_blueprint(api, url_prefix='/api')
-app.register_blueprint(web, url_prefix='/')
-app.register_blueprint(login, url_prefix='/user')
+base = app.config['BASE_PATH']
+app.register_blueprint(api, url_prefix='%s/api' % (base,))
+app.register_blueprint(web, url_prefix='%s/' % (base,))
+app.register_blueprint(login, url_prefix='%s/user' % (base,))

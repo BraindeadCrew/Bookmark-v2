@@ -15,3 +15,5 @@ class Configuration(object):
 
   # pagination properties
   PER_PAGE = 2
+
+  BASE_PATH = ''
