@@ -8,7 +8,7 @@ CLASSIFIERS = [
 
 setup(
     name="Bookmark",
-    version="0.0.1-SNAPSHOT",
+    version="0.0.1",
     packages=find_packages(),
     scripts=['manage.py', 'import.py', ],
     install_requires=[
