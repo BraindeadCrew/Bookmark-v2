@@ -19,6 +19,8 @@ setup(
         'BeautifulSoup>=3.2.0',
         'Flask-Script>=0.3.3',
         'Flask-DebugToolbar>=0.1.3',
+        'lxml>=2.3.5' ,
+        'httplib2>=0.7.4',
     ],
     package_data={
         '': ['*.txt', '*.rst'],
