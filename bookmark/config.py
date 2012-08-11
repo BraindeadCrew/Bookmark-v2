@@ -1,6 +1,6 @@
 class Configuration(object):
   DEBUG = True
-  SRF_ENABLED = True
+  CSRF_ENABLED = True
   CSRF_SESSION_KEY = "csrf_token"
   VERSION = '0.0.1'
   NAME = 'bookmark'
