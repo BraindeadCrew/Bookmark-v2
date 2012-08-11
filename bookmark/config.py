@@ -1,6 +1,6 @@
 class Configuration(object):
   DEBUG = True
-  SRF_ENABLED = True
+  CSRF_ENABLED = True
   CSRF_SESSION_KEY = "csrf_token"
   VERSION = '0.0.1'
   NAME = 'bookmark'
@@ -16,4 +16,4 @@ class Configuration(object):
   # pagination properties
   PER_PAGE = 2
 
-  BASE_PATH = ''
+  API_ROOT = ''

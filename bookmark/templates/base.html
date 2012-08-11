@@ -15,5 +15,7 @@
 <div id="container" class="container">
 {% block content %}{% endblock %}
 </div>
+{# rendre configurable #}
+<input type="hidden" id="api_root" value="{{config.API_ROOT}}" />
 </body>
 </html>
