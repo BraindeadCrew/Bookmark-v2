@@ -1,5 +1,5 @@
 from bookmark import app
-from flaskext.script import Manager, Command
+from flask.ext.script import Manager, Command
 from bookmark.init import reset_all
 
 
